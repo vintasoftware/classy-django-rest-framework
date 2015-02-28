@@ -25,7 +25,3 @@ class Generator(object):
         context = self.get_context()
         with open(filename, 'w') as f:
             f.write(template.render(context))
-
-
-# generator = Generator('CreateAPIView', 'rest_framework.generics')
-# generator.generate()
