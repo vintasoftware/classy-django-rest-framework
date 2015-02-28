@@ -1,48 +1,129 @@
 import types
+import collections
+import inspect
 
 from rest_framework import generics
+from rest_framework import views as rest_views
 from rest_framework.compat import View
 
 
+def add_to_views_if_its_restframework(views, klass):
+    if not klass.__module__.startswith('rest_framework'):
+        return
+    views[klass.__module__ + '.' + klass.__name__] = klass
+
+
 def get_views():
-    modules = [generics]
+    modules = [rest_views, generics]
     views = {}
 
-    for module_str in modules:
-        for attr in dir(module_str):
+    for module in modules:
+        for attr_str in dir(module):
             is_subclass = False
-            module = getattr(module_str, attr)
+            attr = getattr(module, attr_str)
             try:
-                is_subclass = issubclass(module, View)
+                is_subclass = issubclass(attr, View)
             except TypeError:
                 pass
-            if not attr.startswith('_') and is_subclass:
-                views[attr] = getattr(module_str, attr)
+            if not attr_str.startswith('_') and is_subclass:
+                add_to_views_if_its_restframework(views, attr)
+                for klass in attr.mro():
+                    add_to_views_if_its_restframework(views, klass)
     return views
 drfviews = get_views()
 
 
-class Inspector(object):
+class Attribute(object):
+    def __init__(self, name, value, classobject):
+        self.name = name
+        self.value = value
+        self.classobject = classobject
+        self.dirty = False
 
-    def __init__(self, view_name):
+    def __eq__(self, obj):
+        return self.name == obj.name and self.value == obj.value
+
+    def __neq__(self, obj):
+        return not self.__eq__(obj)
+
+
+class Method(Attribute):
+    def __init__(self, *args, **kwargs):
+        super(Method, self).__init__(*args, **kwargs)
+        self.children = []
+
+
+class Attributes(collections.MutableSequence):
+    # Attributes must be added following mro order
+    def __init__(self):
+        self.attrs = []
+
+    def __getitem__(self, key):
+        return self.attrs[key]
+
+    def __setitem__(self, key, value):
+        if key < len(self.attrs) or not isinstance(key, int):
+            raise ValueError("Can't change value of position")
+        if not isinstance(value, Attribute):
+            raise TypeError('Can only hold Attributes')
+        # find attributes higher in the mro
+        # PS: methods can't be dirty, because they don't necessarily override
+        existing = filter(lambda x: x.name == value.name, self.attrs)
+        if existing and not isinstance(value, Method):
+            value.dirty = True
+        elif existing:
+            existing[-1].children.append(value)
+            return
+        self.attrs.append(value)
+        self.attrs.sort(key=lambda x: x.name)
+
+    def __delitem__(self, key):
+        del self.attrs[key]
+
+    def __len__(self):
+        return len(self.attrs)
+
+    def insert(self, i, x):
+        self.__setitem__(i, x)
+
+
+class Inspector(object):
+    def __init__(self, view_name, module_name):
         self.view_name = view_name
+        self.module_name = module_name
 
     def get_view(self):
-        return drfviews[self.view_name]
+        return drfviews[self.module_name + '.' + self.view_name]
 
-    def get_ancestors(self):
+    def get_views_mro(self):
         ancestors = []
         for ancestor in self.get_view().mro():
             if ancestor is object:
                 break
-            ancestors.append(ancestor.__name__)
+            ancestors.append(ancestor)
         return ancestors
 
     def get_attributes(self):
-        attrs = {}
-        for attr_str in dir(self.get_view()):
-            attr = getattr(self.get_view(), attr_str)
-            if (not attr_str.startswith('_') and
-                    not isinstance(attr, types.MethodType)):
-                attrs[attr_str] = attr
+        attrs = Attributes()
+
+        for view in self.get_views_mro():
+            for attr_str in view.__dict__.keys():
+                attr = getattr(view, attr_str)
+                if (not attr_str.startswith('__') and
+                        not isinstance(attr, types.MethodType)):
+                    attrs.append(Attribute(name=attr_str, value=attr,
+                                           classobject=view))
+        return attrs
+
+    def get_methods(self):
+        attrs = Attributes()
+
+        for view in self.get_views_mro():
+            for attr_str in view.__dict__.keys():
+                attr = getattr(view, attr_str)
+                if (not attr_str.startswith('__') and
+                        isinstance(attr, types.MethodType)):
+                    attrs.append(Method(name=attr_str,
+                                 value=inspect.getsource(attr),
+                                 classobject=view))
         return attrs

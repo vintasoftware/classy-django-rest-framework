@@ -1,0 +1,72 @@
+<html>
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+<h2>{{ name }}</h2>
+
+<p>Ancestors (MRO):</p>
+<ul>
+{% for ancestor in ancestors %}
+<li>
+{{ ancestor.__name__ }} ({{ ancestor.__module__ }})
+</li>
+{% endfor %}
+</ul>
+
+<p>Attributes</p>
+<ul>
+{% for attribute in attributes %}
+<li>
+{% if attribute.dirty %}
+  <strike>{{ attribute.name }} = {{ attribute.value|e }} ({{ attribute.classobject.__name__ }})</strike>
+{% else %}
+  {{ attribute.name }} = {{ attribute.value|e }} ({{ attribute.classobject.__name__ }})
+{% endif %}
+</li>
+{% endfor %}
+</ul>
+
+<p>Methods</p>
+<ul>
+{% for method in methods %}
+<li>
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+<div class="panel panel-default">
+  <div class="panel-heading" role="tab" id="heading{{method.name}}{{loop.index}}">
+    <h4 class="panel-title">
+      <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{loop.index}}" aria-expanded="false" aria-controls="collapse{{loop.index}}">
+        {{ method.name }} ({{ method.classobject.__name__ }}):
+      </a>
+    </h4>
+  </div>
+  <div id="collapse{{loop.index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{loop.index}}">
+    <div class="panel-body">
+      <pre>{{ method.value|e }}</pre>
+    </div>
+  </div>
+</div>
+{% for child in method.children %}
+<div class="panel panel-default">
+  <div class="panel-heading" role="tab" id="headingcld{{child.name}}{{loop.index}}">
+    <h4 class="panel-title">
+      <a data-toggle="collapse" data-parent="#accordion" href="#collapsecld{{child.name}}{{loop.index}}" aria-expanded="false" aria-controls="collapsecld{{child.name}}{{loop.index}}">
+        {{ child.name }} ({{ child.classobject.__name__ }}):
+      </a>
+    </h4>
+  </div>
+  <div id="collapsecld{{child.name}}{{loop.index}}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingcld{{child.name}}{{loop.index}}">
+    <div class="panel-body">
+      <pre>{{ child.value|e }}</pre>
+    </div>
+  </div>
+</div>
+{% endfor %}
+</li>
+{% endfor %}
+</ul>
+
+</body>
+</html>

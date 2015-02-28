@@ -1,30 +1,34 @@
 import unittest
 import types
 
-from inspector import Inspector
+from rest_framework_ccbv.inspector import Inspector
 from rest_framework import generics
+
+from rest_framework_ccbv.inspector import Attribute
 
 
 class TestOne(unittest.TestCase):
     def setUp(self):
-        self.view = 'CreateAPIView'
-        self.inspector = Inspector(self.view)
+        self.view = 'GenericAPIView'
+        self.module = 'rest_framework.generics'
+        self.inspector = Inspector(self.view, self.module)
 
     def test_get_view(self):
         self.assertEquals(self.inspector.get_view(),
                           getattr(generics, self.view))
 
     def test_first_ancestor_is_itself(self):
-        self.assertEquals(self.inspector.get_ancestors()[0], self.view)
+        self.assertEquals(self.inspector.get_views_mro()[0].__name__, self.view)
 
     def test_ancestor(self):
-        self.assertEquals(self.inspector.get_ancestors(),
-                          [self.view, 'CreateModelMixin',
-                          'GenericAPIView', 'APIView', 'View'])
+        self.assertEquals([x.__name__ for x in self.inspector.get_views_mro()],
+                          [self.view, 'APIView', 'View'])
 
     def test_attributes(self):
-        self.assertIn('allowed_methods', self.inspector.get_attributes())
+        self.assertIn(Attribute(name='serializer_class',
+                                value=None,
+                                classobject=None),
+                      self.inspector.get_attributes())
         for attr in self.inspector.get_attributes():
-            self.assertFalse(attr.startswith('_'))
-            self.assertFalse(isinstance(self.inspector.get_attributes()[attr],
-                             types.MethodType))
+            self.assertFalse(attr.name.startswith('_'))
+            self.assertFalse(isinstance(attr, types.MethodType))
