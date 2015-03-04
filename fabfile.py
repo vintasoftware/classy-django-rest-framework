@@ -7,7 +7,7 @@ from decouple import config
 FOLDER = 'public'
 FOLDER = FOLDER.strip('/')
 
-log = logging.getLogger('deploy')
+logging.basicConfig(level=logging.INFO)
 
 
 def deploy():
@@ -24,10 +24,11 @@ def deploy():
         # do not use the FOLDER prefix
         destpath = dirpath[len(FOLDER):]
         destpath = destpath.strip('/')
-        log.info("Uploading {0} files from {1} to {2} ...".format(len(filenames),
-                                                                  dirpath,
-                                                                  BUCKET_NAME))
+        logging.info("Uploading %s files from %s to %s", len(filenames),
+                     dirpath, BUCKET_NAME)
         for filename in filenames:
             key.name = os.path.relpath(os.path.join(destpath, filename)
                                        ).replace('\\', '/')
             key.set_contents_from_filename(os.path.join(dirpath, filename))
+            logging.debug("Sending %s", key.name)
+    logging.info("done :)")
