@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 
-import os, errno
-import jinja2
+import os
+import errno
 
 from rest_framework_ccbv.inspector import drfviews
 from rest_framework_ccbv.page_generator import Generator
-
-templateLoader = jinja2.FileSystemLoader(searchpath="templates")
-templateEnv = jinja2.Environment(loader=templateLoader)
+from rest_framework_ccbv.jinja_utils import templateEnv
 
 
 def mkdir_p(path):
@@ -26,10 +24,11 @@ def main():
         mkdir_p(os.path.join('public', view.__module__))
         generator.generate(filename=os.path.join('public', view.__module__,
                                                  view.__name__ + '.html'))
-    template = templateEnv.get_template('list.html')
+    template = templateEnv.get_template('home.html')
+    views = sorted(drfviews.values(),
+                   key=lambda x: (x.__module__, x.__name__))
     with open(os.path.join('public', 'index.html'), 'w') as f:
-        f.write(template.render({'views': drfviews.values()}))
-
+        f.write(template.render({'views': views}))
 
 if __name__ == '__main__':
     main()

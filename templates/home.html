@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+
+{% block title %}{{ projectversion }}{% endblock %}
+
+
+{% block nav %}
+{% endblock %}
+
+
+{% block content %}
+    <div class="span12">
+        <h1>{{ projectversion }}</h1>
+        <div class="row">
+            {% with column_width=6 %}
+                {% include '_klass_list.html' %}
+            {% endwith %}
+        </div>
+    </div>
+{% endblock %}
+
+
+{% block extra_js %}
+    <script src="/static/ccbv.js"></script>
+    <script src="/static/bootstrap-tooltip.js"></script>
+    <script>
+        $( function (){
+            CCBV.klass_list.hide_secondary();
+            $('#klass-buttons').show();
+            $('#klass-buttons #toggle-secondary-klasses').click(function () {
+                var button = $(this);
+                CCBV.klass_list.toggle_secondary().promise().done(function () {
+                    if ($(this).css('display') == 'none') {
+                        button.text('Show more');
+                    } else {
+                        button.text('Show less');
+                    }
+                });
+            });
+            $('.klass-tooltip').tooltip();
+        })
+    </script>
+{% endblock %}

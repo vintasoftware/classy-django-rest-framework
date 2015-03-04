@@ -1,9 +1,6 @@
-import jinja2
 
 from inspector import Inspector
-
-templateLoader = jinja2.FileSystemLoader(searchpath="templates")
-templateEnv = jinja2.Environment(loader=templateLoader)
+from jinja_utils import templateEnv
 
 
 class Generator(object):

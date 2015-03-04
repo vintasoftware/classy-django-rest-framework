@@ -38,8 +38,16 @@ def test():
     local("python runtests.py")
 
 
+def runserver():
+    local("cd public")
+    local("pwd")
+    local("cd public && python -m SimpleHTTPServer")
+
+
 def build():
-    test()
+    logging.info("collecting statics")
+    local("rm -fr public/static")
+    local("cp -r static public/")
     logging.info("building statics")
     from compile_static import main
     main()
