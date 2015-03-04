@@ -3,6 +3,7 @@ import os
 import logging
 
 from decouple import config
+from fabric.api import local
 
 FOLDER = 'public'
 FOLDER = FOLDER.strip('/')
@@ -31,4 +32,14 @@ def deploy():
                                        ).replace('\\', '/')
             key.set_contents_from_filename(os.path.join(dirpath, filename))
             logging.debug("Sending %s", key.name)
-    logging.info("done :)")
+
+
+def test():
+    local("python runtests.py")
+
+
+def build():
+    test()
+    logging.info("building statics")
+    from compile_static import main
+    main()

@@ -1,5 +1,2 @@
 -r requirements.txt
-Django==1.7.5
-djangorestframework==3.0.5
-py==1.4.26
 pytest==2.6.4
