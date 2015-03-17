@@ -1,4 +1,6 @@
 boto==2.36.0
+Django==1.7.5
 Fabric==1.10.1
+ipdb==0.8
+Jinja2==2.7.3
 python-decouple==2.3
-tox==1.9.0
