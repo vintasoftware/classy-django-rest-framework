@@ -2,7 +2,7 @@
 {% for view in views %}
     {% if current_module !=  view.__module__  or loop.index0 == 0%}
         {% if loop.index0 != 0 %}</ul></div>{% endif %}
-        {% if view.__module__.split('.')[-1] == 'detail'%}</div><div class="span{{ column_width }}">{% endif %}
+        {% if view.__module__.split('.')[-1] == 'mixins'%}</div><div class="span{{ column_width }}">{% endif %}
         <div class="well skinny klass-list">
         <ul class="nav nav-list">
         <li class="nav-header"><h3>{{ view.__module__.split('.')[-1] }}</h3></li>

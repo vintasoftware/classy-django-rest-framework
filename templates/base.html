@@ -33,7 +33,27 @@
             <div class="container">
                 <a class="brand" href="/">ccbv.co.uk</a>
                 <ul class="nav">
-                {% block nav %}{% endblock nav %}
+
+                {% block nav %}
+
+                <li li="version-{{ version }}" class="dropdown">
+                    {% if not other_versions %}
+                        <a href="#">{{ version_prefix }} {{ version }}</a>
+                    {% else %}
+                        <a href="#version-{{ version }}" class="dropdown-toggle" data-toggle="dropdown">
+                            {{ version_prefix }} {{ version }} <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% for v in other_versions %}
+                                <li>
+                                    <a href="{{ get_version_url(v) }}">{{ v }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+
+                {% endblock nav %}
                 </ul>
             </div>
         </div>
