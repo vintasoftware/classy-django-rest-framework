@@ -20,14 +20,15 @@ def mkdir_p(path):
 
 
 def main():
+    views = sorted(drfviews.values(),
+                   key=lambda x: (x.__module__, x.__name__))
+
     for view in drfviews.values():
-        generator = DetailPageGenerator(view.__name__, view.__module__)
+        generator = DetailPageGenerator(views, view.__name__, view.__module__)
         mkdir_p(os.path.join('public', VERSION, view.__module__))
         generator.generate(filename=os.path.join('public', VERSION,
                                                  view.__module__,
                                                  view.__name__ + '.html'))
-    views = sorted(drfviews.values(),
-                   key=lambda x: (x.__module__, x.__name__))
 
     generator = IndexPageGenerator(views)
     generator.generate(os.path.join('public', VERSION, 'index.html'))

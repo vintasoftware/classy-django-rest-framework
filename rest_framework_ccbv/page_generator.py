@@ -2,9 +2,13 @@
 from inspector import Inspector
 from jinja_utils import templateEnv
 from config import REST_FRAMEWORK_VERSIONS, VERSION
+from itertools import ifilter
 
 
 class BasePageGenerator(object):
+
+    def __init__(self, views):
+        self.views = views
 
     def generate(self, filename):
         template = templateEnv.get_template(self.template_name)
@@ -16,16 +20,18 @@ class BasePageGenerator(object):
         other_versions = list(REST_FRAMEWORK_VERSIONS)
         other_versions.remove(VERSION)
         return {
-                'version_prefix': 'Django REST Framework',
-                'version': VERSION,
-                'versions': REST_FRAMEWORK_VERSIONS,
-                'other_versions': other_versions}
+            'version_prefix': 'Django REST Framework',
+            'version': VERSION,
+            'versions': REST_FRAMEWORK_VERSIONS,
+            'other_versions': other_versions,
+            'views': self.views}
 
 
 class DetailPageGenerator(BasePageGenerator):
     template_name = 'detail_view.html'
 
-    def __init__(self, view, module):
+    def __init__(self, views, view, module):
+        super(DetailPageGenerator, self).__init__(views)
         self.view = view
         self.module = module
         self.inspector = Inspector(self.view, self.module)
@@ -36,16 +42,11 @@ class DetailPageGenerator(BasePageGenerator):
         context['ancestors'] = self.inspector.get_views_mro()
         context['attributes'] = self.inspector.get_attributes()
         context['methods'] = self.inspector.get_methods()
+        context['this_klass'] = next(ifilter(lambda x: x.__name__ == self.view,
+                                             self.views))
+        context['this_module'] = context['this_klass'].__module__
         return context
 
 
 class IndexPageGenerator(BasePageGenerator):
     template_name = 'index.html'
-
-    def __init__(self, views):
-        self.views = views
-
-    def get_context(self):
-        context = super(IndexPageGenerator, self).get_context()
-        context['views'] = self.views
-        return context
