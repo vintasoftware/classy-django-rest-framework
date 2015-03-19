@@ -1,5 +1,4 @@
 
-import os
 import logging
 
 from decouple import config
@@ -12,26 +11,17 @@ logging.basicConfig(level=logging.INFO)
 
 
 def deploy():
-    import boto
-    from boto.s3.connection import S3Connection
+    BUCKET_NAME = config('AWS_BUCKET_NAME')
     AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-    BUCKET_NAME = config('AWS_BUCKET_NAME')
-    conn = S3Connection(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
-
-    bucket = conn.get_bucket(BUCKET_NAME)
-    key = boto.s3.key.Key(bucket)
-    for dirpath, dirnames, filenames in os.walk(FOLDER):
-        # do not use the FOLDER prefix
-        destpath = dirpath[len(FOLDER):]
-        destpath = destpath.strip('/')
-        logging.info("Uploading %s files from %s to %s", len(filenames),
-                     dirpath, BUCKET_NAME)
-        for filename in filenames:
-            key.name = os.path.relpath(os.path.join(destpath, filename)
-                                       ).replace('\\', '/')
-            key.set_contents_from_filename(os.path.join(dirpath, filename))
-            logging.debug("Sending %s", key.name)
+    local("s3cmd sync {}/ s3://{} --acl-public --delete-removed "
+          "--guess-mime-type --access_key={} --secret_key={}".format(
+            FOLDER,
+            BUCKET_NAME,
+            AWS_ACCESS_KEY_ID,
+            AWS_SECRET_ACCESS_KEY
+            )
+          )
 
 
 def test():
@@ -39,17 +29,31 @@ def test():
 
 
 def runserver():
-    local("cd public && python -m SimpleHTTPServer")
+    local("cd %s && python -m SimpleHTTPServer" % FOLDER)
+
+
+def clean():
+    local("rm -fr %s/*" % FOLDER)
+    local("mkdir -p %s/static" % FOLDER)
+
+
+def collect_static():
+    local("cp -r static %s/" % FOLDER)
 
 
 def build_local():
+    clean()
+    collect_static()
+    build_for_version()
+
+
+def build_for_version():
     from compile_static import main
     main()
 
 
 def build():
-    local("rm -fr public/*")
-    local("mkdir -p public/static")
+    clean()
     logging.info("collecting statics")
-    local("cp -r static public/")
+    collect_static()
     local("tox -c build.ini")

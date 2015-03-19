@@ -5,6 +5,9 @@ import inspect
 from rest_framework import generics
 from rest_framework import views as rest_views
 from rest_framework.compat import View
+from pygments import highlight
+from pygments.lexers import PythonLexer
+from pygments.formatters import HtmlFormatter
 
 
 def add_to_views_if_its_restframework(views, klass):
@@ -51,6 +54,26 @@ class Method(Attribute):
     def __init__(self, *args, **kwargs):
         super(Method, self).__init__(*args, **kwargs)
         self.children = []
+
+    def params_string(self):
+        stack = []
+        argspec = inspect.getargspec(self.value)
+        if argspec.keywords:
+            stack.insert(0, '**' + argspec.keywords)
+        if argspec.varargs:
+            stack.insert(0, '*' + argspec.varargs)
+        defaults = list(argspec.defaults or [])
+        for arg in argspec.args[::-1]:
+            if defaults:
+                default = defaults.pop()
+                stack.insert(0, '{}={}'.format(arg, default))
+            else:
+                stack.insert(0, arg)
+        return ', '.join(stack)
+
+    def code(self):
+        code = inspect.getsource(self.value)
+        return highlight(code, PythonLexer(), HtmlFormatter())
 
 
 class Attributes(collections.MutableSequence):
@@ -103,6 +126,13 @@ class Inspector(object):
             ancestors.append(ancestor)
         return ancestors
 
+    def get_children(self):
+        children = []
+        for view in drfviews.values():
+            if issubclass(view, self.get_view()) and view != self.get_view():
+                children.append(view)
+        return children
+
     def get_attributes(self):
         attrs = Attributes()
 
@@ -124,6 +154,6 @@ class Inspector(object):
                 if (not attr_str.startswith('__') and
                         isinstance(attr, types.MethodType)):
                     attrs.append(Method(name=attr_str,
-                                 value=inspect.getsource(attr),
+                                 value=attr,
                                  classobject=view))
         return attrs

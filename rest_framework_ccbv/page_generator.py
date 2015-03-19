@@ -28,7 +28,7 @@ class BasePageGenerator(object):
 
 
 class DetailPageGenerator(BasePageGenerator):
-    template_name = 'detail_view.html'
+    template_name = 'detail_2.html'
 
     def __init__(self, views, view, module):
         super(DetailPageGenerator, self).__init__(views)
@@ -44,6 +44,7 @@ class DetailPageGenerator(BasePageGenerator):
         context['methods'] = self.inspector.get_methods()
         context['this_klass'] = next(ifilter(lambda x: x.__name__ == self.view,
                                              self.views))
+        context['children'] = self.inspector.get_children()
         context['this_module'] = context['this_klass'].__module__
         return context
 

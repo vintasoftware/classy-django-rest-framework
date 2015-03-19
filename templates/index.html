@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
 
 
-{% block title %}{{ projectversion }}{% endblock %}
+{% block title %}{{ version_prefix }}{{ version }}{% endblock %}
 
 
 {% block content %}
     <div class="span12">
-        <h1>{{ projectversion }}</h1>
+        <h1>{{ version_prefix }} {{ version }}</h1>
         <div class="row">
             {% with column_width=6 %}
                 {% include '_klass_list.html' %}
