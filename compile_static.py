@@ -5,8 +5,8 @@ import errno
 
 from rest_framework_ccbv.config import VERSION, REST_FRAMEWORK_VERSIONS
 from rest_framework_ccbv.inspector import drfviews
-from rest_framework_ccbv.page_generator import (DetailPageGenerator,
-                                                IndexPageGenerator)
+from rest_framework_ccbv.renderers import (DetailPageRenderer,
+                                           IndexPageRenderer)
 
 
 def mkdir_p(path):
@@ -24,17 +24,17 @@ def main():
                    key=lambda x: (x.__module__, x.__name__))
 
     for view in drfviews.values():
-        generator = DetailPageGenerator(views, view.__name__, view.__module__)
+        renderer = DetailPageRenderer(views, view.__name__, view.__module__)
         mkdir_p(os.path.join('public', VERSION, view.__module__))
-        generator.generate(filename=os.path.join('public', VERSION,
-                                                 view.__module__,
-                                                 view.__name__ + '.html'))
+        renderer.render(filename=os.path.join('public', VERSION,
+                                              view.__module__,
+                                              view.__name__ + '.html'))
 
-    generator = IndexPageGenerator(views)
-    generator.generate(os.path.join('public', VERSION, 'index.html'))
+    renderer = IndexPageRenderer(views)
+    renderer.render(os.path.join('public', VERSION, 'index.html'))
 
     if VERSION == REST_FRAMEWORK_VERSIONS[-1]:
-        generator.generate(os.path.join('public', 'index.html'))
+        renderer.render(os.path.join('public', 'index.html'))
 
 
 if __name__ == '__main__':

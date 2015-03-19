@@ -5,12 +5,12 @@ from config import REST_FRAMEWORK_VERSIONS, VERSION
 from itertools import ifilter
 
 
-class BasePageGenerator(object):
+class BasePageRenderer(object):
 
     def __init__(self, views):
         self.views = views
 
-    def generate(self, filename):
+    def render(self, filename):
         template = templateEnv.get_template(self.template_name)
         context = self.get_context()
         with open(filename, 'w') as f:
@@ -27,17 +27,17 @@ class BasePageGenerator(object):
             'views': self.views}
 
 
-class DetailPageGenerator(BasePageGenerator):
-    template_name = 'detail_2.html'
+class DetailPageRenderer(BasePageRenderer):
+    template_name = 'detail_view.html'
 
     def __init__(self, views, view, module):
-        super(DetailPageGenerator, self).__init__(views)
+        super(DetailPageRenderer, self).__init__(views)
         self.view = view
         self.module = module
         self.inspector = Inspector(self.view, self.module)
 
     def get_context(self):
-        context = super(DetailPageGenerator, self).get_context()
+        context = super(DetailPageRenderer, self).get_context()
         context['name'] = self.view
         context['ancestors'] = self.inspector.get_views_mro()
         context['attributes'] = self.inspector.get_attributes()
@@ -49,5 +49,5 @@ class DetailPageGenerator(BasePageGenerator):
         return context
 
 
-class IndexPageGenerator(BasePageGenerator):
+class IndexPageRenderer(BasePageRenderer):
     template_name = 'index.html'
