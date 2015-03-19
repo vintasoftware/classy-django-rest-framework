@@ -39,20 +39,17 @@ def test():
 
 
 def runserver():
-    local("cd public")
-    local("pwd")
     local("cd public && python -m SimpleHTTPServer")
 
 
 def build_local():
-    logging.info("collecting statics")
-    local("rm -fr public/static")
-    local("mkdir -p public/static")
-    local("cp -r static public/")
-    logging.info("building statics")
     from compile_static import main
     main()
 
 
 def build():
+    local("rm -fr public/*")
+    local("mkdir -p public/static")
+    logging.info("collecting statics")
+    local("cp -r static public/")
     local("tox -c build.ini")
