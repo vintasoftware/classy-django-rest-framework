@@ -56,3 +56,4 @@ target/
 
 public/
 .env
+views.txt
