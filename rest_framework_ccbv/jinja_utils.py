@@ -11,8 +11,7 @@ templateEnv = Environment(loader=templateLoader,
 @contextfunction
 def get_view_url(context, view, version=VERSION):
     if view.__module__.split('.')[0] == 'django':
-        return 'http://ccbv.co.uk/projects/Django/1.7/{}/{}'.format(
-            view.__module__, view.__name__)
+        return 'http://ccbv.co.uk/{}'.format(view.__name__)
     return '/{}/{}/{}.html'.format(version, view.__module__, view.__name__)
 
 
