@@ -47,10 +47,19 @@ def build_local():
     build_for_version()
 
 
+def index_generator():
+    from index_generator import main
+    main()
+
+
 def build_for_version():
     from compile_static import main
     main()
 
+def build_test():
+    clean()
+    local("rm views.txt")
+    local("tox -c index_gen.ini")
 
 def build():
     clean()
