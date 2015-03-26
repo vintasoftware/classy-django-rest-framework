@@ -40,6 +40,7 @@ class DetailPageRenderer(BasePageRenderer):
         context = super(DetailPageRenderer, self).get_context()
         context['name'] = self.view
         context['ancestors'] = self.inspector.get_views_mro()
+        context['direct_ancestors'] = self.inspector.get_direct_ancestors()
         context['attributes'] = self.inspector.get_attributes()
         context['methods'] = self.inspector.get_methods()
         context['this_klass'] = next(ifilter(lambda x: x.__name__ == self.view,

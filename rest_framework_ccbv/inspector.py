@@ -157,3 +157,7 @@ class Inspector(object):
                                  value=attr,
                                  classobject=view))
         return attrs
+
+    def get_direct_ancestors(self):
+        view = self.get_view()
+        return view.__bases__
