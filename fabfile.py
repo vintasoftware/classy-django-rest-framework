@@ -58,7 +58,7 @@ def build_for_version():
 
 def build_test():
     clean()
-    local("rm views.txt")
+    local("rm .views.json")
     local("tox -c index_gen.ini")
 
 def build():
