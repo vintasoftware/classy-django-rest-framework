@@ -1,4 +1,6 @@
 
+import json
+
 from inspector import Inspector
 from jinja_utils import templateEnv
 from config import REST_FRAMEWORK_VERSIONS, VERSION
@@ -36,8 +38,20 @@ class DetailPageRenderer(BasePageRenderer):
         self.module = module
         self.inspector = Inspector(self.view, self.module)
 
+    def get_available_versions(self):
+        with open('.views.json', 'r') as f:
+            views_versions = json.loads(f.read())
+        
+        return [version
+            for version in views_versions 
+            if self.view in views_versions[version][self.module]]
+
     def get_context(self):
         context = super(DetailPageRenderer, self).get_context()
+
+        context['other_versions'] = [version
+            for version in context['other_versions'] 
+            if version in self.get_available_versions()]
         context['name'] = self.view
         context['ancestors'] = self.inspector.get_views_mro()
         context['attributes'] = self.inspector.get_attributes()
