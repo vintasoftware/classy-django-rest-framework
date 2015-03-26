@@ -56,4 +56,4 @@ target/
 
 public/
 .env
-views.txt
+.views.json
