@@ -45,6 +45,7 @@ def collect_static():
 def build_local():
     clean()
     collect_static()
+    index_generator_for_version()
     build_for_version()
 
 
