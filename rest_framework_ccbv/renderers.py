@@ -1,6 +1,4 @@
 
-import json
-
 from inspector import Inspector
 from jinja_utils import templateEnv
 from config import REST_FRAMEWORK_VERSIONS, VERSION
