@@ -1,6 +1,7 @@
 import types
 import collections
 import inspect
+import json
 
 from rest_framework import generics
 from rest_framework import views as rest_views
@@ -157,3 +158,11 @@ class Inspector(object):
                                  value=attr,
                                  classobject=view))
         return attrs
+
+    def get_available_versions(self):
+        with open('.views.json', 'r') as f:
+            views_versions = json.loads(f.read())
+        
+        return [version
+            for version in views_versions 
+            if self.view_name in views_versions[version][self.module_name]]
