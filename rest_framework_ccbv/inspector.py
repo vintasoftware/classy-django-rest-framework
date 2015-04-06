@@ -165,4 +165,4 @@ class Inspector(object):
         
         return [version
             for version in views_versions 
-            if self.view in views_versions[version][self.module_name]]
+            if self.view_name in views_versions[version][self.module_name]]
