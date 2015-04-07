@@ -40,6 +40,15 @@ class TestInspector(unittest.TestCase):
                               ['ListCreateAPIView',
                                'ListAPIView'])
 
+    def test_direct_acenstors(self):
+        self.view = 'CreateAPIView'
+        self.module = 'rest_framework.generics'
+        self.inspector = Inspector(self.view, self.module)
+        self.assertItemsEqual([x.__name__ for x in
+                              self.inspector.get_direct_ancestors()],
+                              ['CreateModelMixin',
+                               'GenericAPIView'])
+
 
 class TestMethod(unittest.TestCase):
     def setUp(self):

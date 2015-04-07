@@ -159,10 +159,14 @@ class Inspector(object):
                                  classobject=view))
         return attrs
 
+    def get_direct_ancestors(self):
+        view = self.get_view()
+        return view.__bases__
+
     def get_available_versions(self):
         with open('.views.json', 'r') as f:
             views_versions = json.loads(f.read())
-        
+
         return [version
             for version in views_versions 
             if self.view_name in views_versions[version][self.module_name]]
