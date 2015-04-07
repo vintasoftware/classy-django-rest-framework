@@ -33,6 +33,7 @@ def runserver():
 
 
 def clean():
+    local("rm -f .views.json")
     local("rm -fr %s/*" % FOLDER)
     local("mkdir -p %s/static" % FOLDER)
 
@@ -44,7 +45,13 @@ def collect_static():
 def build_local():
     clean()
     collect_static()
+    index_generator_for_version()
     build_for_version()
+
+
+def index_generator_for_version():
+    from index_generator import main
+    main()
 
 
 def build_for_version():
@@ -54,6 +61,7 @@ def build_for_version():
 
 def build():
     clean()
+    logging.info("indexing versions views")
     logging.info("collecting statics")
     collect_static()
     local("tox -c build.ini")
