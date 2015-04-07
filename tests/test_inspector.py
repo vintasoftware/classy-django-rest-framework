@@ -16,7 +16,8 @@ class TestInspector(unittest.TestCase):
                           getattr(generics, self.view))
 
     def test_first_ancestor_is_itself(self):
-        self.assertEquals(self.inspector.get_views_mro()[0].__name__, self.view)
+        self.assertEquals(self.inspector.get_views_mro()[0].__name__,
+                          self.view)
 
     def test_ancestor(self):
         self.assertEquals([x.__name__ for x in self.inspector.get_views_mro()],

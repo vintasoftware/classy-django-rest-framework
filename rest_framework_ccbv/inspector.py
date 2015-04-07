@@ -167,6 +167,7 @@ class Inspector(object):
         with open('.views.json', 'r') as f:
             views_versions = json.loads(f.read())
 
-        return [version
-            for version in views_versions 
+        return [
+            version
+            for version in views_versions
             if self.view_name in views_versions[version][self.module_name]]

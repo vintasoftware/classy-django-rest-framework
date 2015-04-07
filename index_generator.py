@@ -20,11 +20,11 @@ def main():
     if os.path.isfile('.views.json'):
         with open('.views.json', 'r') as f:
             d = json.loads(f.read())
-    
+
     d[VERSION] = d_version
     with open('.views.json', 'w') as f:
         json.dump(d, f, indent=2)
-        
+
 
 if __name__ == '__main__':
     main()

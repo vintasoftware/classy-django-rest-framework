@@ -40,8 +40,9 @@ class DetailPageRenderer(BasePageRenderer):
         context = super(DetailPageRenderer, self).get_context()
         available_versions = self.inspector.get_available_versions()
 
-        context['other_versions'] = [version
-            for version in context['other_versions'] 
+        context['other_versions'] = [
+            version
+            for version in context['other_versions']
             if version in available_versions]
         context['name'] = self.view
         context['ancestors'] = self.inspector.get_views_mro()
