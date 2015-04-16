@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ version_prefix }} {{ version }}{% endblock %}
+
+{% block content %}
+    <div class="span7">
+        <h1>Classy Django REST Framework.</h1>
+        <p class="lead">Detailed
+            descriptions, with full methods and attributes, for each of
+            <a href="http://www.django-rest-framework.org/">Django REST Framework</a>'s class-based views and serializers.
+        </p>
+    </div>
+    <div class="span8">
+        <div>
+            <h2>Start Here for {{ version_prefix }} {{ version }}.</h2>
+            <div class="row">
+                {% with column_width=4 %}
+                    {% include '_klass_list.html' %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+    <div class="span4">
+        <h2>What is this?</h2>
+        <p>
+            Django REST framework is a powerful and flexible toolkit that makes it easy to build Web APIs. It provides class based generic API views and serializers. We've taken all the attributes and methods that every view/serializer defines or inherits, and flattened all that information onto one comprehensive page per view.
+
+            This project is heavily based on <a href="http://ccbv.co.uk/">Classy Class-Based Views</a> and was developed to help beginners by <a href="http://www.vinta.com.br">Vinta Software Studio</a>.
+        </p>
+    </div>
+{% endblock %}
+
+
+{% block extra_js %}
+    <script src="/static/ccbv.js"></script>
+    <script src="/static/bootstrap-tooltip.js"></script>
+    <script>
+        $( function (){
+            CCBV.klass_list.hide_secondary();
+            $('#klass-buttons').show();
+            $('#klass-buttons #toggle-secondary-klasses').click(function () {
+                var button = $(this);
+                CCBV.klass_list.toggle_secondary().promise().done(function () {
+                    if ($(this).css('display') == 'none') {
+                        button.text('Show more');
+                    } else {
+                        button.text('Show less');
+                    }
+                });
+            });
+            $('.klass-tooltip').tooltip();
+        })
+    </script>
+{% endblock %}

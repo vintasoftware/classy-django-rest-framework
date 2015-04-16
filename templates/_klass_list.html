@@ -1,5 +1,5 @@
 <div class="span{{ column_width }}">
-{% for view in views %}
+    {% for view in views %}
     {% if current_module !=  view.__module__  or loop.first %}
         {% if not loop.first %}</ul></div>{% endif %}
         {% if view.__module__.split('.')[-1] == 'mixins'%}</div><div class="span{{ column_width }}">{% endif %}
@@ -13,6 +13,6 @@
             {{ view.__name__ }}
         </a>
     </li>
-{% endfor %}
+    {% endfor %}
 </ul></div>
 </div>
