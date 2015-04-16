@@ -6,6 +6,8 @@ import json
 from rest_framework import generics
 from rest_framework import views as rest_views
 from rest_framework.compat import View
+from rest_framework import serializers
+from rest_framework.serializers import BaseSerializer
 from pygments import highlight
 from pygments.lexers import PythonLexer
 from pygments.formatters import HtmlFormatter
@@ -18,7 +20,7 @@ def add_to_views_if_its_restframework(views, klass):
 
 
 def get_views():
-    modules = [rest_views, generics]
+    modules = [rest_views, generics, serializers]
     views = {}
 
     for module in modules:
@@ -26,7 +28,8 @@ def get_views():
             is_subclass = False
             attr = getattr(module, attr_str)
             try:
-                is_subclass = issubclass(attr, View)
+                is_subclass = (issubclass(attr, View) or
+                               issubclass(attr, BaseSerializer))
             except TypeError:
                 pass
             if not attr_str.startswith('_') and is_subclass:
