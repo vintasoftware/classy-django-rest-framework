@@ -64,3 +64,7 @@ class IndexPageRenderer(BasePageRenderer):
 
 class LandPageRenderer(BasePageRenderer):
     template_name = 'home.html'
+
+
+class ErrorPageRenderer(BasePageRenderer):
+    template_name = 'error.html'

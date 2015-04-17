@@ -7,7 +7,8 @@ from rest_framework_ccbv.config import VERSION, REST_FRAMEWORK_VERSIONS
 from rest_framework_ccbv.inspector import drfklasses
 from rest_framework_ccbv.renderers import (DetailPageRenderer,
                                            IndexPageRenderer,
-                                           LandPageRenderer)
+                                           LandPageRenderer,
+                                           ErrorPageRenderer)
 
 
 def mkdir_p(path):
@@ -38,7 +39,8 @@ def main():
     if VERSION == REST_FRAMEWORK_VERSIONS[-1]:
         renderer = LandPageRenderer(klasses)
         renderer.render(os.path.join('public', 'index.html'))
-
+        renderer = ErrorPageRenderer(klasses)
+        renderer.render(os.path.join('public', 'error.html'))
 
 if __name__ == '__main__':
     main()
