@@ -6,7 +6,8 @@ import errno
 from rest_framework_ccbv.config import VERSION, REST_FRAMEWORK_VERSIONS
 from rest_framework_ccbv.inspector import drfviews
 from rest_framework_ccbv.renderers import (DetailPageRenderer,
-                                           IndexPageRenderer)
+                                           IndexPageRenderer,
+                                           LandPageRenderer)
 
 
 def mkdir_p(path):
@@ -34,6 +35,7 @@ def main():
     renderer.render(os.path.join('public', VERSION, 'index.html'))
 
     if VERSION == REST_FRAMEWORK_VERSIONS[-1]:
+        renderer = LandPageRenderer(views)
         renderer.render(os.path.join('public', 'index.html'))
 
 

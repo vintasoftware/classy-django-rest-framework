@@ -57,4 +57,8 @@ class DetailPageRenderer(BasePageRenderer):
 
 
 class IndexPageRenderer(BasePageRenderer):
+    template_name = 'index.html'
+
+
+class LandPageRenderer(BasePageRenderer):
     template_name = 'home.html'
