@@ -56,7 +56,7 @@ def index_generator_for_version():
 
 def build_for_version():
     from build_tools.compile_static import main
-    main()
+    main(out_folder=FOLDER)
 
 
 def build():

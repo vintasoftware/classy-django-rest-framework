@@ -21,26 +21,26 @@ def mkdir_p(path):
             raise
 
 
-def main():
+def main(out_folder='public'):
     klasses = sorted(drfklasses.values(),
                      key=lambda x: (x.__module__, x.__name__))
 
     for klass in drfklasses.values():
         renderer = DetailPageRenderer(klasses, klass.__name__,
                                       klass.__module__)
-        mkdir_p(os.path.join('public', VERSION, klass.__module__))
-        renderer.render(filename=os.path.join('public', VERSION,
+        mkdir_p(os.path.join(out_folder, VERSION, klass.__module__))
+        renderer.render(filename=os.path.join(out_folder, VERSION,
                                               klass.__module__,
                                               klass.__name__ + '.html'))
 
     renderer = IndexPageRenderer(klasses)
-    renderer.render(os.path.join('public', VERSION, 'index.html'))
+    renderer.render(os.path.join(out_folder, VERSION, 'index.html'))
 
     if VERSION == REST_FRAMEWORK_VERSIONS[-1]:
         renderer = LandPageRenderer(klasses)
-        renderer.render(os.path.join('public', 'index.html'))
+        renderer.render(os.path.join(out_folder, 'index.html'))
         renderer = ErrorPageRenderer(klasses)
-        renderer.render(os.path.join('public', 'error.html'))
+        renderer.render(os.path.join(out_folder, 'error.html'))
 
 if __name__ == '__main__':
     main()
