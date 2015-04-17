@@ -1,16 +1,16 @@
 <div class="span{{ column_width }}">
-    {% for view in views %}
-    {% if current_module !=  view.__module__  or loop.first %}
+    {% for klass in klasses %}
+    {% if current_module !=  klass.__module__  or loop.first %}
         {% if not loop.first %}</ul></div>{% endif %}
-        {% if view.__module__.split('.')[-1] == 'mixins'%}</div><div class="span{{ column_width }}">{% endif %}
+        {% if klass.__module__.split('.')[-1] == 'mixins'%}</div><div class="span{{ column_width }}">{% endif %}
         <div class="well skinny klass-list">
         <ul class="nav nav-list">
-        <li class="nav-header"><h3>{{ view.__module__.split('.')[-1] }}</h3></li>
-        {% set current_module = view.__module__ %}
+        <li class="nav-header"><h3>{{ klass.__module__.split('.')[-1] }}</h3></li>
+        {% set current_module = klass.__module__ %}
     {% endif %}
     <li class="primary">
-        <a href="{{ get_view_url(view) }}" {% if get_view_docs(view) %}class="klass-tooltip" data-original-title="{{ get_view_docs(view) }}" data-placement="bottom"{% endif %}>
-            {{ view.__name__ }}
+        <a href="{{ get_klass_url(klass) }}" {% if get_klass_docs(klass) %}class="klass-tooltip" data-original-title="{{ get_klass_docs(klass) }}" data-placement="bottom"{% endif %}>
+            {{ klass.__name__ }}
         </a>
     </li>
     {% endfor %}

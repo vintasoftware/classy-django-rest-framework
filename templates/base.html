@@ -54,20 +54,20 @@
                 </li>
 
                 <li class="divider-vertical"></li>
-                {% for view in views %}
-                    {% if current_module != view.__module__ or loop.first %}
+                {% for klass in klasses %}
+                    {% if current_module != klass.__module__ or loop.first %}
                         {% if not loop.first %}</ul></li>{% endif %}
-                        {% set module_short_name = view.__module__.split('.')[-1] %}
-                        <li id="module-{{ module_short_name }}" class="dropdown{% if view.__module__ == this_module %} active{% endif %}">
+                        {% set module_short_name = klass.__module__.split('.')[-1] %}
+                        <li id="module-{{ module_short_name }}" class="dropdown{% if klass.__module__ == this_module %} active{% endif %}">
                         <a href="#module-{{ module_short_name }}" class="dropdown-toggle" data-toggle="dropdown">
                             {{ module_short_name|title }} <b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu">
                     {% endif %}
-                    <li {% if view == this_klass %}class=" active"{% endif %}>
-                        <a href="{{ get_view_url(view) }}">{{ view.__name__ }}</a>
+                    <li {% if klass == this_klass %}class=" active"{% endif %}>
+                        <a href="{{ get_klass_url(klass) }}">{{ klass.__name__ }}</a>
                     </li>
-                    {% set current_module = view.__module__ %}
+                    {% set current_module = klass.__module__ %}
                 {% endfor %}
                 </ul></li>
                 {% endblock nav %}

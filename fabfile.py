@@ -33,7 +33,7 @@ def runserver():
 
 
 def clean():
-    local("rm -f .views.json")
+    local("rm -f .klasses.json")
     local("rm -fr %s/*" % FOLDER)
     local("mkdir -p %s/static" % FOLDER)
 
@@ -61,7 +61,6 @@ def build_for_version():
 
 def build():
     clean()
-    logging.info("indexing versions views")
     logging.info("collecting statics")
     collect_static()
     local("tox -c build.ini")

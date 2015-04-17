@@ -13,15 +13,15 @@ from pygments.lexers import PythonLexer
 from pygments.formatters import HtmlFormatter
 
 
-def add_to_views_if_its_restframework(views, klass):
+def add_to_klasses_if_its_restframework(klasses, klass):
     if not klass.__module__.startswith('rest_framework'):
         return
-    views[klass.__module__ + '.' + klass.__name__] = klass
+    klasses[klass.__module__ + '.' + klass.__name__] = klass
 
 
-def get_views():
+def get_klasses():
     modules = [rest_views, generics, serializers]
-    views = {}
+    klasses = {}
 
     for module in modules:
         for attr_str in dir(module):
@@ -33,11 +33,11 @@ def get_views():
             except TypeError:
                 pass
             if not attr_str.startswith('_') and is_subclass:
-                add_to_views_if_its_restframework(views, attr)
+                add_to_klasses_if_its_restframework(klasses, attr)
                 for klass in attr.mro():
-                    add_to_views_if_its_restframework(views, klass)
-    return views
-drfviews = get_views()
+                    add_to_klasses_if_its_restframework(klasses, klass)
+    return klasses
+drfklasses = get_klasses()
 
 
 class Attribute(object):
@@ -94,8 +94,8 @@ class Attributes(collections.MutableSequence):
         if not isinstance(value, Attribute):
             raise TypeError('Can only hold Attributes')
         # find attributes higher in the mro
-        # PS: methods can't be dirty, because they don't necessarily override
         existing = filter(lambda x: x.name == value.name, self.attrs)
+        # methods can't be dirty, because they don't necessarily override
         if existing and not isinstance(value, Method):
             value.dirty = True
         elif existing:
@@ -115,16 +115,16 @@ class Attributes(collections.MutableSequence):
 
 
 class Inspector(object):
-    def __init__(self, view_name, module_name):
-        self.view_name = view_name
+    def __init__(self, klass_name, module_name):
+        self.klass_name = klass_name
         self.module_name = module_name
 
-    def get_view(self):
-        return drfviews[self.module_name + '.' + self.view_name]
+    def get_klass(self):
+        return drfklasses[self.module_name + '.' + self.klass_name]
 
-    def get_views_mro(self):
+    def get_klass_mro(self):
         ancestors = []
-        for ancestor in self.get_view().mro():
+        for ancestor in self.get_klass().mro():
             if ancestor is object:
                 break
             ancestors.append(ancestor)
@@ -132,45 +132,46 @@ class Inspector(object):
 
     def get_children(self):
         children = []
-        for view in drfviews.values():
-            if issubclass(view, self.get_view()) and view != self.get_view():
-                children.append(view)
+        for klass in drfklasses.values():
+            if (issubclass(klass, self.get_klass()) and
+                    klass != self.get_klass()):
+                children.append(klass)
         return children
 
     def get_attributes(self):
         attrs = Attributes()
 
-        for view in self.get_views_mro():
-            for attr_str in view.__dict__.keys():
-                attr = getattr(view, attr_str)
+        for klass in self.get_klass_mro():
+            for attr_str in klass.__dict__.keys():
+                attr = getattr(klass, attr_str)
                 if (not attr_str.startswith('__') and
                         not isinstance(attr, types.MethodType)):
                     attrs.append(Attribute(name=attr_str, value=attr,
-                                           classobject=view))
+                                           classobject=klass))
         return attrs
 
     def get_methods(self):
         attrs = Attributes()
 
-        for view in self.get_views_mro():
-            for attr_str in view.__dict__.keys():
-                attr = getattr(view, attr_str)
+        for klass in self.get_klass_mro():
+            for attr_str in klass.__dict__.keys():
+                attr = getattr(klass, attr_str)
                 if (not attr_str.startswith('__') and
                         isinstance(attr, types.MethodType)):
                     attrs.append(Method(name=attr_str,
                                  value=attr,
-                                 classobject=view))
+                                 classobject=klass))
         return attrs
 
     def get_direct_ancestors(self):
-        view = self.get_view()
-        return view.__bases__
+        klass = self.get_klass()
+        return klass.__bases__
 
     def get_available_versions(self):
-        with open('.views.json', 'r') as f:
-            views_versions = json.loads(f.read())
+        with open('.klasses.json', 'r') as f:
+            klass_versions = json.loads(f.read())
 
         return [
             version
-            for version in views_versions
-            if self.view_name in views_versions[version][self.module_name]]
+            for version in klass_versions
+            if self.klass_name in klass_versions[version][self.module_name]]

@@ -7,8 +7,8 @@ from itertools import ifilter
 
 class BasePageRenderer(object):
 
-    def __init__(self, views):
-        self.views = views
+    def __init__(self, klasses):
+        self.klasses = klasses
 
     def render(self, filename):
         template = templateEnv.get_template(self.template_name)
@@ -24,17 +24,17 @@ class BasePageRenderer(object):
             'version': VERSION,
             'versions': REST_FRAMEWORK_VERSIONS,
             'other_versions': other_versions,
-            'views': self.views}
+            'klasses': self.klasses}
 
 
 class DetailPageRenderer(BasePageRenderer):
     template_name = 'detail_view.html'
 
-    def __init__(self, views, view, module):
-        super(DetailPageRenderer, self).__init__(views)
-        self.view = view
+    def __init__(self, klasses, klass, module):
+        super(DetailPageRenderer, self).__init__(klasses)
+        self.klass = klass
         self.module = module
-        self.inspector = Inspector(self.view, self.module)
+        self.inspector = Inspector(self.klass, self.module)
 
     def get_context(self):
         context = super(DetailPageRenderer, self).get_context()
@@ -44,13 +44,15 @@ class DetailPageRenderer(BasePageRenderer):
             version
             for version in context['other_versions']
             if version in available_versions]
-        context['name'] = self.view
-        context['ancestors'] = self.inspector.get_views_mro()
+        context['name'] = self.klass
+        context['ancestors'] = self.inspector.get_klass_mro()
         context['direct_ancestors'] = self.inspector.get_direct_ancestors()
         context['attributes'] = self.inspector.get_attributes()
         context['methods'] = self.inspector.get_methods()
-        context['this_klass'] = next(ifilter(lambda x: x.__name__ == self.view,
-                                             self.views))
+
+        context['this_klass'] = next(
+            ifilter(lambda x: x.__name__ == self.klass, self.klasses))
+
         context['children'] = self.inspector.get_children()
         context['this_module'] = context['this_klass'].__module__
         return context

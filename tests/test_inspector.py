@@ -7,21 +7,21 @@ from rest_framework import generics
 
 class TestInspector(unittest.TestCase):
     def setUp(self):
-        self.view = 'GenericAPIView'
+        self.klass = 'GenericAPIView'
         self.module = 'rest_framework.generics'
-        self.inspector = Inspector(self.view, self.module)
+        self.inspector = Inspector(self.klass, self.module)
 
-    def test_get_view(self):
-        self.assertEquals(self.inspector.get_view(),
-                          getattr(generics, self.view))
+    def test_get_klass(self):
+        self.assertEquals(self.inspector.get_klass(),
+                          getattr(generics, self.klass))
 
     def test_first_ancestor_is_itself(self):
-        self.assertEquals(self.inspector.get_views_mro()[0].__name__,
-                          self.view)
+        self.assertEquals(self.inspector.get_klass_mro()[0].__name__,
+                          self.klass)
 
     def test_ancestor(self):
-        self.assertEquals([x.__name__ for x in self.inspector.get_views_mro()],
-                          [self.view, 'APIView', 'View'])
+        self.assertEquals([x.__name__ for x in self.inspector.get_klass_mro()],
+                          [self.klass, 'APIView', 'View'])
 
     def test_attributes(self):
         self.assertIn(Attribute(name='serializer_class',
@@ -33,18 +33,18 @@ class TestInspector(unittest.TestCase):
             self.assertFalse(isinstance(attr, types.MethodType))
 
     def test_children(self):
-        self.view = 'ListModelMixin'
+        self.klass = 'ListModelMixin'
         self.module = 'rest_framework.mixins'
-        self.inspector = Inspector(self.view, self.module)
+        self.inspector = Inspector(self.klass, self.module)
         self.assertItemsEqual([x.__name__ for x in
                                self.inspector.get_children()],
                               ['ListCreateAPIView',
                                'ListAPIView'])
 
     def test_direct_acenstors(self):
-        self.view = 'CreateAPIView'
+        self.klass = 'CreateAPIView'
         self.module = 'rest_framework.generics'
-        self.inspector = Inspector(self.view, self.module)
+        self.inspector = Inspector(self.klass, self.module)
         self.assertItemsEqual([x.__name__ for x in
                               self.inspector.get_direct_ancestors()],
                               ['CreateModelMixin',

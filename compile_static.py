@@ -4,7 +4,7 @@ import os
 import errno
 
 from rest_framework_ccbv.config import VERSION, REST_FRAMEWORK_VERSIONS
-from rest_framework_ccbv.inspector import drfviews
+from rest_framework_ccbv.inspector import drfklasses
 from rest_framework_ccbv.renderers import (DetailPageRenderer,
                                            IndexPageRenderer,
                                            LandPageRenderer)
@@ -21,21 +21,22 @@ def mkdir_p(path):
 
 
 def main():
-    views = sorted(drfviews.values(),
-                   key=lambda x: (x.__module__, x.__name__))
+    klasses = sorted(drfklasses.values(),
+                     key=lambda x: (x.__module__, x.__name__))
 
-    for view in drfviews.values():
-        renderer = DetailPageRenderer(views, view.__name__, view.__module__)
-        mkdir_p(os.path.join('public', VERSION, view.__module__))
+    for klass in drfklasses.values():
+        renderer = DetailPageRenderer(klasses, klass.__name__,
+                                      klass.__module__)
+        mkdir_p(os.path.join('public', VERSION, klass.__module__))
         renderer.render(filename=os.path.join('public', VERSION,
-                                              view.__module__,
-                                              view.__name__ + '.html'))
+                                              klass.__module__,
+                                              klass.__name__ + '.html'))
 
-    renderer = IndexPageRenderer(views)
+    renderer = IndexPageRenderer(klasses)
     renderer.render(os.path.join('public', VERSION, 'index.html'))
 
     if VERSION == REST_FRAMEWORK_VERSIONS[-1]:
-        renderer = LandPageRenderer(views)
+        renderer = LandPageRenderer(klasses)
         renderer.render(os.path.join('public', 'index.html'))
 
 
