@@ -50,12 +50,12 @@ def build_local():
 
 
 def index_generator_for_version():
-    from index_generator import main
+    from build_tools.index_generator import main
     main()
 
 
 def build_for_version():
-    from compile_static import main
+    from build_tools.compile_static import main
     main()
 
 
