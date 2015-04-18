@@ -1,4 +1,4 @@
-# cdrf.co
+# Classy Django REST Framework. (http://cdrf.co)
 
 ## Dependencies
 * Python 2.7
