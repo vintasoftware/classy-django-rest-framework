@@ -8,7 +8,8 @@ from rest_framework_ccbv.inspector import drfklasses
 from rest_framework_ccbv.renderers import (DetailPageRenderer,
                                            IndexPageRenderer,
                                            LandPageRenderer,
-                                           ErrorPageRenderer)
+                                           ErrorPageRenderer,
+                                           SitemapRenderer)
 
 
 def mkdir_p(path):
@@ -41,6 +42,8 @@ def main(out_folder='public'):
         renderer.render(os.path.join(out_folder, 'index.html'))
         renderer = ErrorPageRenderer(klasses)
         renderer.render(os.path.join(out_folder, 'error.html'))
+        renderer = SitemapRenderer(klasses)
+        renderer.render(os.path.join(out_folder, 'sitemap.xml'))
 
 if __name__ == '__main__':
     main()
