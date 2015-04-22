@@ -1,4 +1,6 @@
 
+import json
+
 from inspector import Inspector
 from jinja_utils import templateEnv
 from config import REST_FRAMEWORK_VERSIONS, VERSION
@@ -68,3 +70,16 @@ class LandPageRenderer(BasePageRenderer):
 
 class ErrorPageRenderer(BasePageRenderer):
     template_name = 'error.html'
+
+
+class SitemapRenderer(BasePageRenderer):
+    template_name = 'sitemap.xml'
+
+    def get_context(self):
+        context = {}
+        with open('.klasses.json', 'r') as f:
+            klasses = json.loads(f.read())
+
+        context['klasses'] = klasses
+        context['latest_version'] = REST_FRAMEWORK_VERSIONS[-1]
+        return context
