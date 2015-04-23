@@ -11,13 +11,13 @@ logging.basicConfig(level=logging.INFO)
 
 
 def deploy():
-    BUCKET_NAME = config('AWS_BUCKET_NAME')
+    AWS_BUCKET_NAME = config('AWS_BUCKET_NAME')
     AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
     local("s3cmd sync {}/ s3://{} --acl-public --delete-removed "
           "--guess-mime-type --access_key={} --secret_key={}".format(
             FOLDER,
-            BUCKET_NAME,
+            AWS_BUCKET_NAME,
             AWS_ACCESS_KEY_ID,
             AWS_SECRET_ACCESS_KEY
             )
