@@ -39,7 +39,9 @@ class TestInspector(unittest.TestCase):
         self.assertItemsEqual([x.__name__ for x in
                                self.inspector.get_children()],
                               ['ListCreateAPIView',
-                               'ListAPIView'])
+                               'ListAPIView',
+                               'ModelViewSet',
+                               'ReadOnlyModelViewSet'])
 
     def test_direct_acenstors(self):
         self.klass = 'CreateAPIView'

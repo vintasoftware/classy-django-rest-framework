@@ -5,6 +5,10 @@ import json
 
 from rest_framework import generics
 from rest_framework import views as rest_views
+try:
+    from rest_framework import viewsets
+except ImportError:
+    viewsets = None
 from rest_framework.compat import View
 from rest_framework import serializers
 from rest_framework.serializers import BaseSerializer
@@ -21,6 +25,9 @@ def add_to_klasses_if_its_restframework(klasses, klass):
 
 def get_klasses():
     modules = [rest_views, generics, serializers]
+
+    if viewsets is not None:
+        modules.append(viewsets)
     klasses = {}
 
     for module in modules:
@@ -174,4 +181,5 @@ class Inspector(object):
         return [
             version
             for version in klass_versions
-            if self.klass_name in klass_versions[version][self.module_name]]
+            if self.module_name in klass_versions[version] and
+            self.klass_name in klass_versions[version][self.module_name]]
