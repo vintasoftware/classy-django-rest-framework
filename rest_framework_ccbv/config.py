@@ -13,3 +13,4 @@ REST_FRAMEWORK_VERSIONS = [
 
 VERSION = '.'.join(rest_framework_version.split('.')[:2])
 EXACT_VERSION = rest_framework_version
+BASE_URL = 'http://www.cdrf.co'

@@ -3,7 +3,7 @@ import json
 
 from inspector import Inspector
 from jinja_utils import templateEnv
-from config import REST_FRAMEWORK_VERSIONS, VERSION
+from config import REST_FRAMEWORK_VERSIONS, VERSION, BASE_URL
 from itertools import ifilter
 
 
@@ -82,4 +82,5 @@ class SitemapRenderer(BasePageRenderer):
 
         context['klasses'] = klasses
         context['latest_version'] = REST_FRAMEWORK_VERSIONS[-1]
+        context['base_url'] = BASE_URL
         return context
