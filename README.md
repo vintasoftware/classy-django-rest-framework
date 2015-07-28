@@ -33,3 +33,6 @@ AWS_SECRET_ACCESS_KEY=''
 and deploy via
 
 `fab deploy`
+
+## Help
+If you have any questions or need help, please send an email to: contact@vinta.com.br
