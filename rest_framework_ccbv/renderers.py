@@ -16,7 +16,7 @@ class BasePageRenderer(object):
         template = templateEnv.get_template(self.template_name)
         context = self.get_context()
         with open(filename, 'w') as f:
-            f.write(template.render(context))
+            f.write(template.render(context).encode("UTF-8"))
 
     def get_context(self):
         other_versions = list(REST_FRAMEWORK_VERSIONS)
