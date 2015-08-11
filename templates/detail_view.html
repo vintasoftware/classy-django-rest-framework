@@ -18,6 +18,28 @@
             $("#expand-methods-btn").click(function() {
                 CCBV.method_list.expand();
             });
+
+            function goToAnchor() {
+              var anchor = window.location.hash.replace("#", "");
+              $(".collapse").collapse('hide');
+              $("#" + anchor).collapse('show');
+              $('#' + anchor + ' .collapse').collapse('show');
+              setTimeout(function(){
+                if ($('#' + anchor)) {
+                  console.log("scrolling");
+                  $('html, body').animate({
+                    scrollTop: $('#' + anchor).offset().top - 70
+                  }, 0);
+                }
+              }, 700);
+            }
+
+            $(document).ready(function() {
+              goToAnchor();
+
+              window.addEventListener("hashchange", function() { goToAnchor(); });
+
+            });
         });
     </script>
     <script src="/static/ccbv.js"></script>
@@ -126,6 +148,7 @@
                                     <span class="k">def</span>
                                     <span class="nf">{{ method.name }}</span>(<span class="n">{{ method.params_string() }}</span>):
                                 </code>
+                                 <a class="headerlink" href="#{{ method.name }}" title="Permalink to this method">¶</a>
                                 {% if method.children|length == 0 %}
                                     <small class="pull-right">{{ method.classobject.__name__ }}</small>
                                 {% endif %}
