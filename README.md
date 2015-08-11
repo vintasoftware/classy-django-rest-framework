@@ -30,7 +30,7 @@ AWS_ACCESS_KEY_ID=''
 AWS_SECRET_ACCESS_KEY=''
 ```
 
-and deploy via
+Make sure you have built it as instructed above and deploy via
 
 `fab deploy`
 
