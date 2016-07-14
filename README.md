@@ -34,5 +34,10 @@ Make sure you have built it as instructed above and deploy via
 
 `fab deploy`
 
+## Tests
+
+You can run the tests with:
+`fab test`
+
 ## Help
 If you have any questions or need help, please send an email to: contact@vinta.com.br
