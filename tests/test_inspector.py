@@ -26,7 +26,8 @@ class TestInspector(unittest.TestCase):
     def test_attributes(self):
         self.assertIn(Attribute(name='serializer_class',
                                 value=None,
-                                classobject=None),
+                                classobject=None,
+                                instance_class=self.inspector.get_klass()),
                       self.inspector.get_attributes())
         for attr in self.inspector.get_attributes():
             self.assertFalse(attr.name.startswith('_'))
@@ -51,6 +52,15 @@ class TestInspector(unittest.TestCase):
                               self.inspector.get_direct_ancestors()],
                               ['CreateModelMixin',
                                'GenericAPIView'])
+
+    def test_unavailable_methods(self):
+        self.klass = 'ListModelMixin'
+        self.module = 'rest_framework.mixins'
+        self.inspector = Inspector(self.klass, self.module)
+        self.assertItemsEqual(self.inspector.get_unavailable_methods(),
+                              ['filter_queryset', 'get_queryset',
+                               'paginate_queryset', 'get_serializer',
+                               'get_paginated_response'])
 
 
 class TestMethod(unittest.TestCase):
@@ -82,15 +92,15 @@ class TestMethod(unittest.TestCase):
 
             def method8(self, a=2, b=3, **kwargs):
                 pass
-        self.method = Method('method', A.method, A)
-        self.method1 = Method('method1', A.method1, A)
-        self.method2 = Method('method2', A.method2, A)
-        self.method3 = Method('method3', A.method3, A)
-        self.method4 = Method('method4', A.method4, A)
-        self.method5 = Method('method5', A.method5, A)
-        self.method6 = Method('method6', A.method6, A)
-        self.method7 = Method('method7', A.method7, A)
-        self.method8 = Method('method8', A.method8, A)
+        self.method = Method('method', A.method, A, A)
+        self.method1 = Method('method1', A.method1, A, A)
+        self.method2 = Method('method2', A.method2, A, A)
+        self.method3 = Method('method3', A.method3, A, A)
+        self.method4 = Method('method4', A.method4, A, A)
+        self.method5 = Method('method5', A.method5, A, A)
+        self.method6 = Method('method6', A.method6, A, A)
+        self.method7 = Method('method7', A.method7, A, A)
+        self.method8 = Method('method8', A.method8, A, A)
 
     def test_method(self):
         self.assertEqual(self.method.params_string(), 'self, *args, **kwargs')

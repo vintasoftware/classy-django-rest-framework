@@ -22,16 +22,16 @@
             function goToAnchor() {
               var anchor = window.location.hash.replace("#", "");
               $(".collapse").collapse('hide');
-              $("#" + anchor).collapse('show');
-              $('#' + anchor + ' .collapse').collapse('show');
-              setTimeout(function(){
-                if ($('#' + anchor)) {
-                  console.log("scrolling");
+              if (anchor) {
+                $("#" + anchor).collapse('show');
+                $('#' + anchor + ' .collapse').collapse('show');
+                setTimeout(function(){
+                  console.log($('#' + anchor).attr('class'));
                   $('html, body').animate({
                     scrollTop: $('#' + anchor).offset().top - 70
                   }, 0);
-                }
-              }, 700);
+                }, 500);
+              }
             }
 
             $(document).ready(function() {
@@ -93,8 +93,6 @@
                 {% if loop.last %}</ul></div>{% endif %}
             {% endfor %}
         </div>
-
-        
         <div class="row">
             {% for attribute in attributes %}
                 {% if loop.first %}
@@ -129,6 +127,17 @@
                     </div>
                 {% endif %}
             {% endfor %}
+        </div>
+        <div class="row">
+          {% for method in unavailable_methods %}
+              {% if loop.first %}
+              <div class="span12" id="unused-methods">
+              <h2>Methods used but not implemented in this class</h2>
+              <ul class="unstyled">
+              {% endif %}
+                  <li><strong>{{method}}</strong></li>
+              {% if loop.last %}</ul></div>{% endif %}
+          {% endfor %}
         </div>
         <div class="row">
             {% for method in methods %}
@@ -180,6 +189,6 @@
                 {% set previous_name=method.name %}
             {% endfor %}
         </div>
-       
+
     </div>
 {% endblock %}
