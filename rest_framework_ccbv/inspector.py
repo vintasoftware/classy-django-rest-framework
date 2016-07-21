@@ -12,9 +12,10 @@ except ImportError:
 from rest_framework.compat import View
 from rest_framework import serializers
 from rest_framework.serializers import BaseSerializer
-from pygments import highlight
+from pygments import highlight, lex
 from pygments.lexers import PythonLexer
-from pygments.formatters import HtmlFormatter
+from pygments.token import Token
+from custom_formatter import CodeHtmlFormatter
 
 
 def add_to_klasses_if_its_restframework(klasses, klass):
@@ -48,10 +49,11 @@ drfklasses = get_klasses()
 
 
 class Attribute(object):
-    def __init__(self, name, value, classobject):
+    def __init__(self, name, value, classobject, instance_class):
         self.name = name
         self.value = value
         self.classobject = classobject
+        self.instance_class = instance_class
         self.dirty = False
 
     def __eq__(self, obj):
@@ -84,7 +86,7 @@ class Method(Attribute):
 
     def code(self):
         code = inspect.getsource(self.value)
-        return highlight(code, PythonLexer(), HtmlFormatter())
+        return highlight(code, PythonLexer(), CodeHtmlFormatter(self.instance_class))
 
 
 class Attributes(collections.MutableSequence):
@@ -154,7 +156,8 @@ class Inspector(object):
                 if (not attr_str.startswith('__') and
                         not isinstance(attr, types.MethodType)):
                     attrs.append(Attribute(name=attr_str, value=attr,
-                                           classobject=klass))
+                                           classobject=klass,
+                                           instance_class=self.get_klass()))
         return attrs
 
     def get_methods(self):
@@ -167,7 +170,8 @@ class Inspector(object):
                         isinstance(attr, types.MethodType)):
                     attrs.append(Method(name=attr_str,
                                  value=attr,
-                                 classobject=klass))
+                                 classobject=klass,
+                                 instance_class=self.get_klass()))
         return attrs
 
     def get_direct_ancestors(self):
@@ -183,3 +187,36 @@ class Inspector(object):
             for version in klass_versions
             if self.module_name in klass_versions[version] and
             self.klass_name in klass_versions[version][self.module_name]]
+
+    def get_unavailable_methods(self):
+        def next_token(tokensource, lookahead, is_looking_ahead):
+            for ttype, value in tokensource:
+                while lookahead and not is_looking_ahead:
+                    yield lookahead.popleft()
+                yield ttype, value
+
+        def lookahed_token_from_iter(lookahead, next_token_iter):
+            lookahead_token = next(next_token_iter)
+            lookahead.append(lookahead_token)
+            return lookahead_token
+
+        not_implemented_methods = []
+        for method in self.get_methods():
+            lookahead = collections.deque()
+            lookback = collections.deque()
+            is_looking_ahead = False
+            tokensource = lex(inspect.getsource(method.value), PythonLexer())
+            next_token_iter = next_token(tokensource, lookahead, is_looking_ahead)
+            for ttype, value in next_token_iter:
+                lookback.append((ttype, value))
+                if ttype in Token.Name and lookback[-2][1] == '.' and lookback[-3][1] == 'self':
+                    if not hasattr(self.get_klass(), value):
+                        is_looking_ahead = True
+                        try:
+                            _, la_value = lookahed_token_from_iter(lookahead, next_token_iter)
+                            if la_value == '(':
+                                not_implemented_methods.append(value)
+                        except StopIteration:
+                            pass
+                        is_looking_ahead = False
+        return set(not_implemented_methods)

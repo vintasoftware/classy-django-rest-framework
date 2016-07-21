@@ -43,8 +43,5 @@ def configure():
         ),
     )
 
-    try:
-        import django
-        django.setup()
-    except AttributeError:
-        pass
+    import django
+    django.setup()

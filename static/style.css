@@ -166,3 +166,7 @@ footer p {
         width: 200px;
     }
 }
+.highlight a {
+  text-decoration: none;
+  border-bottom: solid 1px rgba(0, 114, 255, 0.21);
+}
