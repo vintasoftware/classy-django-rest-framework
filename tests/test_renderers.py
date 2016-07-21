@@ -5,7 +5,14 @@ from rest_framework.generics import ListAPIView
 
 from rest_framework_ccbv.renderers import (
     BasePageRenderer, IndexPageRenderer, LandPageRenderer, ErrorPageRenderer,
-    SitemapRenderer,
+    SitemapRenderer, DetailPageRenderer,
+)
+from rest_framework_ccbv.config import VERSION
+from rest_framework_ccbv.inspector import Attributes
+
+KLASS_FILE_CONTENT = (
+'{"2.2": {"rest_framework.generics": ["RetrieveDestroyAPIView", "ListAPIView"]},'
+'"%s": {"rest_framework.generics": ["RetrieveDestroyAPIView", "ListAPIView"]}}' % VERSION
 )
 
 
@@ -66,3 +73,27 @@ class TestSitemapRenderer(unittest.TestCase):
         assert context['latest_version']
         assert context['base_url']
         assert context['klasses'] == {}
+
+
+class TestDetailPageRenderer(unittest.TestCase):
+    # @patch('rest_framework_ccbv.renderers.open', mock_open(read_data='{}'))
+    def setUp(self):
+        self.renderer = DetailPageRenderer(
+            [ListAPIView], ListAPIView.__name__, ListAPIView.__module__)
+
+    @patch('rest_framework_ccbv.renderers.templateEnv.get_template')
+    @patch('rest_framework_ccbv.renderers.open', mock_open(read_data=KLASS_FILE_CONTENT))
+    @patch('rest_framework_ccbv.inspector.open', mock_open(read_data=KLASS_FILE_CONTENT))
+    def test_context(self, get_template_mock):
+        self.renderer.render('foo')
+        context = get_template_mock.return_value.render.call_args_list[0][0][0]
+        assert context['other_versions'] == ['2.2']
+        assert context['name'] == ListAPIView.__name__
+        assert isinstance(context['ancestors'], (list, tuple))
+        assert isinstance(context['direct_ancestors'], (list, tuple))
+        assert isinstance(context['attributes'], Attributes)
+        assert isinstance(context['methods'], Attributes)
+        assert context['this_klass'] == ListAPIView
+        assert isinstance(context['children'], list)
+        assert context['this_module'] == ListAPIView.__module__
+        assert isinstance(context['unavailable_methods'], set)
