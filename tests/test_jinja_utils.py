@@ -7,7 +7,8 @@ from rest_framework.generics import ListAPIView
 from rest_framework_ccbv.jinja_utils import templateEnv
 from rest_framework_ccbv.config import EXACT_VERSION
 
-class TestinjaUtils(unittest.TestCase):
+
+class TestJinjaUtils(unittest.TestCase):
 
     def get_context_function(self, name):
         return templateEnv.globals[name]
