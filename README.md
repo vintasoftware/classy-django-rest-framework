@@ -1,4 +1,4 @@
-# Classy Django REST Framework.
+# Classy Django REST Framework. [![Build Status](https://travis-ci.org/vintasoftware/cdrf.co.svg?branch=develop)](https://travis-ci.org/vintasoftware/cdrf.co)
 
 ## What is this?
 
