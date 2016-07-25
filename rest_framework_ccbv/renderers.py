@@ -57,6 +57,7 @@ class DetailPageRenderer(BasePageRenderer):
 
         context['children'] = self.inspector.get_children()
         context['this_module'] = context['this_klass'].__module__
+        context['unavailable_methods'] = self.inspector.get_unavailable_methods()
         return context
 
 
