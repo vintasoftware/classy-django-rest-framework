@@ -36,7 +36,10 @@ Make sure you have built it as instructed above and deploy via
 
 ## Tests
 
-You can run the tests with:
+Install test dependencies:
+`pip install -r requirements-test.txt`
+
+Run the tests with:
 `fab test`
 
 ## Help
