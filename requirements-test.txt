@@ -1,4 +1,4 @@
 -r requirements-tox.txt
-djangorestframework==3.7
+djangorestframework==3.9
 mock==2.0.0
 pytest==2.6.4
