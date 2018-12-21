@@ -1,4 +1,3 @@
-Django==1.8.13
 Fabric==1.10.1
 Jinja2==2.7.3
 Pygments==2.0.2
