@@ -3,8 +3,8 @@
         <loc>{{ base_url }}/</loc>
         <priority>1.0</priority>
     </url>
-    {% for version, modules in klasses.iteritems() %}
-        {% for module, methods in modules.iteritems() %}
+    {% for version, modules in klasses.items() %}
+        {% for module, methods in modules.items() %}
             {% for method in methods %}
                 <url>
                     <loc>{{ base_url }}/{{ version }}/{{ module }}/{{ method }}.html</loc>

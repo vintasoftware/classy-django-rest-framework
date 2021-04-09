@@ -1,5 +1,5 @@
 -r requirements-tox.txt
-djangorestframework==3.9
-django==1.11.17
-mock==2.0.0
-pytest==2.6.4
+djangorestframework==3.12.4
+django==3.2
+mock==4.0.3
+pytest==6.2.3

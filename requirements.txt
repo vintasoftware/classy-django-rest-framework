@@ -1,4 +1,4 @@
-Fabric==1.10.1
-python-decouple==2.3
+Fabric==2.6.0
+python-decouple==3.4
 pycrypto==2.6.1
-tox==1.9.0
+tox==3.23.0

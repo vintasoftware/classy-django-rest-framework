@@ -15,7 +15,7 @@ from rest_framework.serializers import BaseSerializer
 from pygments import highlight, lex
 from pygments.lexers import PythonLexer
 from pygments.token import Token
-from custom_formatter import CodeHtmlFormatter
+from .custom_formatter import CodeHtmlFormatter
 
 
 def add_to_klasses_if_its_restframework(klasses, klass):
@@ -103,7 +103,7 @@ class Attributes(collections.MutableSequence):
         if not isinstance(value, Attribute):
             raise TypeError('Can only hold Attributes')
         # find attributes higher in the mro
-        existing = filter(lambda x: x.name == value.name, self.attrs)
+        existing = list(filter(lambda x: x.name == value.name, self.attrs))
         # methods can't be dirty, because they don't necessarily override
         if existing and not isinstance(value, Method):
             value.dirty = True

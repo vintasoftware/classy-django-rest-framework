@@ -1,10 +1,8 @@
-
 import json
 
-from inspector import Inspector
-from jinja_utils import templateEnv
-from config import REST_FRAMEWORK_VERSIONS, VERSION, BASE_URL
-from itertools import ifilter
+from .inspector import Inspector
+from .jinja_utils import templateEnv
+from .config import REST_FRAMEWORK_VERSIONS, VERSION, BASE_URL
 
 
 class BasePageRenderer(object):
@@ -52,8 +50,7 @@ class DetailPageRenderer(BasePageRenderer):
         context['attributes'] = self.inspector.get_attributes()
         context['methods'] = self.inspector.get_methods()
 
-        context['this_klass'] = next(
-            ifilter(lambda x: x.__name__ == self.klass, self.klasses))
+        context['this_klass'] = next(filter(lambda x: x.__name__ == self.klass, self.klasses))
 
         context['children'] = self.inspector.get_children()
         context['this_module'] = context['this_klass'].__module__

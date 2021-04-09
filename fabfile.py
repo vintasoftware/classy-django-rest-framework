@@ -1,8 +1,7 @@
-
 import logging
 
 from decouple import config
-from fabric.api import local
+from fabric import task
 
 FOLDER = 'public'
 FOLDER = FOLDER.strip('/')
@@ -10,11 +9,12 @@ FOLDER = FOLDER.strip('/')
 logging.basicConfig(level=logging.INFO)
 
 
-def deploy():
+@task
+def deploy(c):
     AWS_BUCKET_NAME = config('AWS_BUCKET_NAME')
     AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-    local("s3cmd sync {}/ s3://{} --acl-public --delete-removed "
+    c.run("s3cmd sync {}/ s3://{} --acl-public --delete-removed "
           "--guess-mime-type --access_key={} --secret_key={}".format(
             FOLDER,
             AWS_BUCKET_NAME,
@@ -24,43 +24,41 @@ def deploy():
           )
 
 
-def test():
-    local("python runtests.py")
+@task
+def test(c):
+    c.run("python runtests.py")
 
 
-def runserver():
-    local("cd %s && python -m SimpleHTTPServer" % FOLDER)
+@task
+def runserver(c):
+    c.run("cd %s && python -m SimpleHTTPServer" % FOLDER)
 
 
-def clean():
-    local("rm -f .klasses.json")
-    local("rm -fr %s/*" % FOLDER)
-    local("mkdir -p %s/static" % FOLDER)
+def clean(c):
+    c.run("rm -f .klasses.json")
+    c.run("rm -fr %s/*" % FOLDER)
+    c.run("mkdir -p %s/static" % FOLDER)
 
 
-def collect_static():
-    local("cp -r static %s/" % FOLDER)
+def collect_static(c):
+    c.run("cp -r static %s/" % FOLDER)
 
 
-def build_local():
-    clean()
-    collect_static()
-    index_generator_for_version()
-    build_for_version()
-
-
-def index_generator_for_version():
+@task
+def index(c):
     from build_tools.index_generator import main
     main()
 
 
-def build_for_version():
+@task
+def version(c):
     from build_tools.compile_static import main
     main(out_folder=FOLDER)
 
 
-def build():
-    clean()
+@task
+def build(c):
+    clean(c)
     logging.info("collecting statics")
-    collect_static()
-    local("tox -c build.ini")
+    collect_static(c)
+    c.run("tox -c build.ini")
