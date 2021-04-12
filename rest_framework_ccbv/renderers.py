@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict
 
 from .inspector import Inspector
 from .jinja_utils import templateEnv
@@ -8,7 +9,11 @@ from .config import REST_FRAMEWORK_VERSIONS, VERSION, BASE_URL
 class BasePageRenderer(object):
 
     def __init__(self, klasses):
-        self.klasses = klasses
+        grouped_klasses = defaultdict(list)
+        for klass in klasses:
+            module = klass.__module__
+            grouped_klasses[module].append(klass)
+        self.grouped_klasses = grouped_klasses
 
     def render(self, filename):
         template = templateEnv.get_template(self.template_name)
@@ -24,7 +29,8 @@ class BasePageRenderer(object):
             'version': VERSION,
             'versions': REST_FRAMEWORK_VERSIONS,
             'other_versions': other_versions,
-            'klasses': self.klasses}
+            'grouped_klasses': self.grouped_klasses,
+        }
 
 
 class DetailPageRenderer(BasePageRenderer):
@@ -50,10 +56,12 @@ class DetailPageRenderer(BasePageRenderer):
         context['attributes'] = self.inspector.get_attributes()
         context['methods'] = self.inspector.get_methods()
 
-        context['this_klass'] = next(filter(lambda x: x.__name__ == self.klass, self.klasses))
+        context['this_klass'] = next(
+            filter(lambda x: x.__name__ == self.klass, self.grouped_klasses[self.module])
+        )
+        context['this_module'] = self.module
 
         context['children'] = self.inspector.get_children()
-        context['this_module'] = context['this_klass'].__module__
         context['unavailable_methods'] = self.inspector.get_unavailable_methods()
         return context
 

@@ -55,22 +55,22 @@
                 </li>
 
                 <li class="divider-vertical"></li>
-                {% for klass in klasses %}
-                    {% if current_module != klass.__module__ or loop.first %}
-                        {% if not loop.first %}</ul></li>{% endif %}
-                        {% set module_short_name = klass.__module__.split('.')[-1] %}
-                        <li id="module-{{ module_short_name }}" class="dropdown{% if klass.__module__ == this_module %} active{% endif %}">
-                        <a href="#module-{{ module_short_name }}" class="dropdown-toggle" data-toggle="dropdown">
-                            {{ module_short_name|title }} <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                    {% endif %}
-                    <li {% if klass == this_klass %}class=" active"{% endif %}>
-                        <a href="{{ get_klass_url(klass) }}">{{ klass.__name__ }}</a>
-                    </li>
-                    {% set current_module = klass.__module__ %}
+
+                {% for module, klasses in grouped_klasses.items() %}
+                <li id="module-{{ module.split('.')[-1] }}" class="dropdown{% if module == this_module %} active{% endif %}">
+                    <a href="#module-{{ module.split('.')[-1] }}" class="dropdown-toggle" data-toggle="dropdown">
+                        {{ module.split('.')[-1]|title }} <b class="caret"></b>
+                    </a>
+                    <ul class="dropdown-menu">
+                        {% for klass in klasses %}
+                        <li {% if klass == this_klass %}class=" active"{% endif %}>
+                            <a href="{{ get_klass_url(klass) }}">{{ klass.__name__ }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </li>
                 {% endfor %}
-                </ul></li>
+
                 {% endblock nav %}
                 </ul>
             </div>
