@@ -147,17 +147,24 @@ class Inspector(object):
                 children.append(klass)
         return children
 
+    def _is_method(self, attr):
+        return isinstance(attr, (types.FunctionType, types.MethodType))
+
     def get_attributes(self):
         attrs = Attributes()
 
         for klass in self.get_klass_mro():
             for attr_str in klass.__dict__.keys():
                 attr = getattr(klass, attr_str)
-                if (not attr_str.startswith('__') and
-                        not isinstance(attr, types.MethodType)):
-                    attrs.append(Attribute(name=attr_str, value=attr,
-                                           classobject=klass,
-                                           instance_class=self.get_klass()))
+                if (not attr_str.startswith('__') and not self._is_method(attr)):
+                    attrs.append(
+                        Attribute(
+                            name=attr_str,
+                            value=attr,
+                            classobject=klass,
+                            instance_class=self.get_klass(),
+                        )
+                    )
         return attrs
 
     def get_methods(self):
@@ -166,12 +173,15 @@ class Inspector(object):
         for klass in self.get_klass_mro():
             for attr_str in klass.__dict__.keys():
                 attr = getattr(klass, attr_str)
-                if (not attr_str.startswith('__') and
-                        isinstance(attr, types.MethodType)):
-                    attrs.append(Method(name=attr_str,
-                                 value=attr,
-                                 classobject=klass,
-                                 instance_class=self.get_klass()))
+                if (not attr_str.startswith('__') and self._is_method(attr)):
+                    attrs.append(
+                        Method(
+                            name=attr_str,
+                            value=attr,
+                            classobject=klass,
+                            instance_class=self.get_klass(),
+                        )
+                    )
         return attrs
 
     def get_direct_ancestors(self):
