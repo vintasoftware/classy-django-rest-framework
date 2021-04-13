@@ -57,3 +57,4 @@ target/
 public/
 .env
 .klasses.json
+.python-version
