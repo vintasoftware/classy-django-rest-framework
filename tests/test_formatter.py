@@ -9,6 +9,7 @@ import unittest
 import tempfile
 import inspect
 
+from html import escape
 from io import StringIO
 from pygments.lexers import PythonLexer
 from pygments.formatters import NullFormatter
@@ -47,7 +48,7 @@ class CodeHtmlFormatterTest(unittest.TestCase):
         fmt = CodeHtmlFormatter(instance_class=type, **optdict)
         fmt.format(tokensource, outfile)
         html = outfile.getvalue()
-        self.assertTrue(re.search("<pre>\s+1\s+2\s+3", html))
+        self.assertTrue(re.search('<pre><span class="normal">\s+1</span>', html))
 
     def test_linenos_with_startnum(self):
         optdict = dict(linenos=True, linenostart=5)
@@ -55,7 +56,7 @@ class CodeHtmlFormatterTest(unittest.TestCase):
         fmt = CodeHtmlFormatter(instance_class=type, **optdict)
         fmt.format(tokensource, outfile)
         html = outfile.getvalue()
-        self.assertTrue(re.search("<pre>\s+5\s+6\s+7", html))
+        self.assertTrue(re.search('<pre><span class="normal">\s+5</span>', html))
 
     def test_lineanchors(self):
         optdict = dict(lineanchors="foo")
@@ -63,7 +64,7 @@ class CodeHtmlFormatterTest(unittest.TestCase):
         fmt = CodeHtmlFormatter(instance_class=type, **optdict)
         fmt.format(tokensource, outfile)
         html = outfile.getvalue()
-        self.assertTrue(re.search("<pre><a name=\"foo-1\">", html))
+        self.assertTrue(re.search('<pre><span></span><a name="foo-1">', html))
 
     def test_lineanchors_with_startnum(self):
         optdict = dict(lineanchors="foo", linenostart=5)
@@ -71,7 +72,7 @@ class CodeHtmlFormatterTest(unittest.TestCase):
         fmt = CodeHtmlFormatter(instance_class=type, **optdict)
         fmt.format(tokensource, outfile)
         html = outfile.getvalue()
-        self.assertTrue(re.search("<pre><a name=\"foo-5\">", html))
+        self.assertTrue(re.search('<pre><span></span><a name="foo-5">', html))
 
     def test_get_style_defs(self):
         def fix_style_def(s):
@@ -114,7 +115,7 @@ class CodeHtmlFormatterTest(unittest.TestCase):
         hfmt = CodeHtmlFormatter(instance_class=self.__class__, nowrap=True)
         houtfile = StringIO()
         hfmt.format(this_token_source, houtfile)
-        assert '<a href="#noop">noop</a>' in houtfile.getvalue()
+        assert escape('<a href="#noop">noop</a>') in houtfile.getvalue()
 
 
 tokensource = list(PythonLexer().get_tokens(
