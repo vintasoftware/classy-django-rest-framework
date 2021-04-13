@@ -12,6 +12,8 @@ except ImportError:
 from rest_framework.compat import View
 from rest_framework import serializers
 from rest_framework.serializers import BaseSerializer
+from rest_framework import pagination
+from rest_framework.pagination import BasePagination
 from pygments import highlight, lex
 from pygments.lexers import PythonLexer
 from pygments.token import Token
@@ -25,7 +27,7 @@ def add_to_klasses_if_its_restframework(klasses, klass):
 
 
 def get_klasses():
-    modules = [rest_views, generics, serializers]
+    modules = [rest_views, generics, serializers, pagination]
 
     if viewsets is not None:
         modules.append(viewsets)
@@ -36,8 +38,10 @@ def get_klasses():
             is_subclass = False
             attr = getattr(module, attr_str)
             try:
-                is_subclass = (issubclass(attr, View) or
-                               issubclass(attr, BaseSerializer))
+                is_subclass = issubclass(
+                    attr,
+                    (View, BaseSerializer, BasePagination)
+                )
             except TypeError:
                 pass
             if not attr_str.startswith('_') and is_subclass:
