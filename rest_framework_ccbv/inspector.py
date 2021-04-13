@@ -70,9 +70,9 @@ class Method(Attribute):
 
     def params_string(self):
         stack = []
-        argspec = inspect.getargspec(self.value)
-        if argspec.keywords:
-            stack.insert(0, '**' + argspec.keywords)
+        argspec = inspect.getfullargspec(self.value)
+        if argspec.varkw:
+            stack.insert(0, '**' + argspec.varkw)
         if argspec.varargs:
             stack.insert(0, '*' + argspec.varargs)
         defaults = list(argspec.defaults or [])
@@ -89,7 +89,7 @@ class Method(Attribute):
         return highlight(code, PythonLexer(), CodeHtmlFormatter(self.instance_class))
 
 
-class Attributes(collections.MutableSequence):
+class Attributes(collections.abc.MutableSequence):
     # Attributes must be added following mro order
     def __init__(self):
         self.attrs = []

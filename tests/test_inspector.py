@@ -12,15 +12,15 @@ class TestInspector(unittest.TestCase):
         self.inspector = Inspector(self.klass, self.module)
 
     def test_get_klass(self):
-        self.assertEquals(self.inspector.get_klass(),
+        self.assertEqual(self.inspector.get_klass(),
                           getattr(generics, self.klass))
 
     def test_first_ancestor_is_itself(self):
-        self.assertEquals(self.inspector.get_klass_mro()[0].__name__,
+        self.assertEqual(self.inspector.get_klass_mro()[0].__name__,
                           self.klass)
 
     def test_ancestor(self):
-        self.assertEquals([x.__name__ for x in self.inspector.get_klass_mro()],
+        self.assertEqual([x.__name__ for x in self.inspector.get_klass_mro()],
                           [self.klass, 'APIView', 'View'])
 
     def test_attributes(self):
