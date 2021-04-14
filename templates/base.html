@@ -57,6 +57,7 @@
                 <li class="divider-vertical"></li>
 
                 {% for module, klasses in grouped_klasses.items() %}
+                {% if not module.split('.')[-1] in ['fields'] %}
                 <li id="module-{{ module.split('.')[-1] }}" class="dropdown{% if module == this_module %} active{% endif %}">
                     <a href="#module-{{ module.split('.')[-1] }}" class="dropdown-toggle" data-toggle="dropdown">
                         {{ module.split('.')[-1]|title }} <b class="caret"></b>
@@ -69,6 +70,7 @@
                         {% endfor %}
                     </ul>
                 </li>
+                {% endif %}
                 {% endfor %}
 
                 {% endblock nav %}
