@@ -41,7 +41,7 @@ class TestBasePageRenderer(unittest.TestCase):
         assert context['version']
         assert context['versions']
         assert context['other_versions']
-        assert dict(context['grouped_klasses']) == {"rest_framework.generics": [ListAPIView]}
+        assert context['grouped_klasses'] == {"rest_framework.generics": [ListAPIView]}
 
 
 class TestStaticPagesRenderered(unittest.TestCase):

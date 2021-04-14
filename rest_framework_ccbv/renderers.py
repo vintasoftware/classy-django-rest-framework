@@ -13,7 +13,7 @@ class BasePageRenderer(object):
         for klass in klasses:
             module = klass.__module__
             grouped_klasses[module].append(klass)
-        self.grouped_klasses = grouped_klasses
+        self.grouped_klasses = dict(grouped_klasses)
 
     def render(self, filename):
         template = templateEnv.get_template(self.template_name)
