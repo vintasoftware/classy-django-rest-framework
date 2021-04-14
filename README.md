@@ -10,6 +10,8 @@
 
 ## Building
 
+On the project root, create a virtual envinroment using `python -m venv env` (it's important to use `env` as the name) and activate it.
+
 `pip install -r requirements.txt`
 
 `fab build`
