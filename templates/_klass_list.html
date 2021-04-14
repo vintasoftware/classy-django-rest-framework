@@ -1,18 +1,17 @@
 <div class="span{{ column_width }}">
-    {% for klass in klasses %}
-    {% if current_module !=  klass.__module__  or loop.first %}
-        {% if not loop.first %}</ul></div>{% endif %}
-        {% if klass.__module__.split('.')[-1] == 'serializers' %}</div><div class="span{{ column_width }}">{% endif %}
-        <div class="well skinny klass-list">
+    {% for module, klasses in grouped_klasses.items() %}
+    {% if module.split('.')[-1] == 'serializers' %}</div><div class="span{{ column_width }}">{% endif %}
+    <div class="well skinny klass-list">
         <ul class="nav nav-list">
-        <li class="nav-header"><h3>{{ klass.__module__.split('.')[-1] }}</h3></li>
-        {% set current_module = klass.__module__ %}
-    {% endif %}
-    <li class="primary">
-        <a href="{{ get_klass_url(klass) }}" {% if get_klass_docs(klass) %}class="klass-tooltip" data-original-title="{{ get_klass_docs(klass) }}" data-placement="bottom"{% endif %}>
-            {{ klass.__name__ }}
-        </a>
-    </li>
+            <li class="nav-header"><h3>{{ module.split('.')[-1] }}</h3></li>
+            {% for klass in klasses %}
+            <li class="primary">
+                <a href="{{ get_klass_url(klass) }}" {% if get_klass_docs(klass) %}class="klass-tooltip" data-original-title="{{ get_klass_docs(klass) }}" data-placement="bottom"{% endif %}>
+                    {{ klass.__name__ }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
     {% endfor %}
-</ul></div>
 </div>

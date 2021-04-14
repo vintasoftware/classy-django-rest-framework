@@ -15,7 +15,7 @@ def main():
     klasses = sorted(drfklasses.values(), key=lambda x: x.__module__)
 
     for key, value in groupby(klasses, lambda x: x.__module__):
-        d_version[key] = map(lambda x: x.__name__, list(value))
+        d_version[key] = list(map(lambda x: x.__name__, list(value)))
 
     if os.path.isfile('.klasses.json'):
         with open('.klasses.json', 'r') as f:

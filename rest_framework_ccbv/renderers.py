@@ -1,22 +1,25 @@
-
 import json
+from collections import defaultdict
 
-from inspector import Inspector
-from jinja_utils import templateEnv
-from config import REST_FRAMEWORK_VERSIONS, VERSION, BASE_URL
-from itertools import ifilter
+from .inspector import Inspector
+from .jinja_utils import templateEnv
+from .config import REST_FRAMEWORK_VERSIONS, VERSION, BASE_URL
 
 
 class BasePageRenderer(object):
 
     def __init__(self, klasses):
-        self.klasses = klasses
+        grouped_klasses = defaultdict(list)
+        for klass in klasses:
+            module = klass.__module__
+            grouped_klasses[module].append(klass)
+        self.grouped_klasses = dict(grouped_klasses)
 
     def render(self, filename):
         template = templateEnv.get_template(self.template_name)
         context = self.get_context()
         with open(filename, 'w') as f:
-            f.write(template.render(context).encode("UTF-8"))
+            f.write(template.render(context))
 
     def get_context(self):
         other_versions = list(REST_FRAMEWORK_VERSIONS)
@@ -26,7 +29,8 @@ class BasePageRenderer(object):
             'version': VERSION,
             'versions': REST_FRAMEWORK_VERSIONS,
             'other_versions': other_versions,
-            'klasses': self.klasses}
+            'grouped_klasses': self.grouped_klasses,
+        }
 
 
 class DetailPageRenderer(BasePageRenderer):
@@ -53,10 +57,11 @@ class DetailPageRenderer(BasePageRenderer):
         context['methods'] = self.inspector.get_methods()
 
         context['this_klass'] = next(
-            ifilter(lambda x: x.__name__ == self.klass, self.klasses))
+            filter(lambda x: x.__name__ == self.klass, self.grouped_klasses[self.module])
+        )
+        context['this_module'] = self.module
 
         context['children'] = self.inspector.get_children()
-        context['this_module'] = context['this_klass'].__module__
         context['unavailable_methods'] = self.inspector.get_unavailable_methods()
         return context
 

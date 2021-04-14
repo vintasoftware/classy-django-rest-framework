@@ -2,11 +2,6 @@ from rest_framework import VERSION as rest_framework_version
 
 
 REST_FRAMEWORK_VERSIONS = [
-    '2.1',
-    '2.2',
-    '2.3',
-    '2.4',
-    '3.0',
     '3.1',
     '3.2',
     '3.3',
@@ -16,6 +11,9 @@ REST_FRAMEWORK_VERSIONS = [
     '3.7',
     '3.8',
     '3.9',
+    '3.10',
+    '3.11',
+    '3.12',
 ]
 
 

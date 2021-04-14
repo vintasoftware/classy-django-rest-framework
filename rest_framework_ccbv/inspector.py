@@ -12,10 +12,12 @@ except ImportError:
 from rest_framework.compat import View
 from rest_framework import serializers
 from rest_framework.serializers import BaseSerializer
+from rest_framework import pagination
+from rest_framework.pagination import BasePagination
 from pygments import highlight, lex
 from pygments.lexers import PythonLexer
 from pygments.token import Token
-from custom_formatter import CodeHtmlFormatter
+from .custom_formatter import CodeHtmlFormatter
 
 
 def add_to_klasses_if_its_restframework(klasses, klass):
@@ -25,7 +27,7 @@ def add_to_klasses_if_its_restframework(klasses, klass):
 
 
 def get_klasses():
-    modules = [rest_views, generics, serializers]
+    modules = [rest_views, generics, serializers, pagination]
 
     if viewsets is not None:
         modules.append(viewsets)
@@ -36,8 +38,10 @@ def get_klasses():
             is_subclass = False
             attr = getattr(module, attr_str)
             try:
-                is_subclass = (issubclass(attr, View) or
-                               issubclass(attr, BaseSerializer))
+                is_subclass = issubclass(
+                    attr,
+                    (View, BaseSerializer, BasePagination)
+                )
             except TypeError:
                 pass
             if not attr_str.startswith('_') and is_subclass:
@@ -70,9 +74,9 @@ class Method(Attribute):
 
     def params_string(self):
         stack = []
-        argspec = inspect.getargspec(self.value)
-        if argspec.keywords:
-            stack.insert(0, '**' + argspec.keywords)
+        argspec = inspect.getfullargspec(self.value)
+        if argspec.varkw:
+            stack.insert(0, '**' + argspec.varkw)
         if argspec.varargs:
             stack.insert(0, '*' + argspec.varargs)
         defaults = list(argspec.defaults or [])
@@ -89,7 +93,7 @@ class Method(Attribute):
         return highlight(code, PythonLexer(), CodeHtmlFormatter(self.instance_class))
 
 
-class Attributes(collections.MutableSequence):
+class Attributes(collections.abc.MutableSequence):
     # Attributes must be added following mro order
     def __init__(self):
         self.attrs = []
@@ -103,7 +107,7 @@ class Attributes(collections.MutableSequence):
         if not isinstance(value, Attribute):
             raise TypeError('Can only hold Attributes')
         # find attributes higher in the mro
-        existing = filter(lambda x: x.name == value.name, self.attrs)
+        existing = list(filter(lambda x: x.name == value.name, self.attrs))
         # methods can't be dirty, because they don't necessarily override
         if existing and not isinstance(value, Method):
             value.dirty = True
@@ -147,17 +151,24 @@ class Inspector(object):
                 children.append(klass)
         return children
 
+    def _is_method(self, attr):
+        return isinstance(attr, (types.FunctionType, types.MethodType))
+
     def get_attributes(self):
         attrs = Attributes()
 
         for klass in self.get_klass_mro():
             for attr_str in klass.__dict__.keys():
                 attr = getattr(klass, attr_str)
-                if (not attr_str.startswith('__') and
-                        not isinstance(attr, types.MethodType)):
-                    attrs.append(Attribute(name=attr_str, value=attr,
-                                           classobject=klass,
-                                           instance_class=self.get_klass()))
+                if (not attr_str.startswith('__') and not self._is_method(attr)):
+                    attrs.append(
+                        Attribute(
+                            name=attr_str,
+                            value=attr,
+                            classobject=klass,
+                            instance_class=self.get_klass(),
+                        )
+                    )
         return attrs
 
     def get_methods(self):
@@ -166,12 +177,15 @@ class Inspector(object):
         for klass in self.get_klass_mro():
             for attr_str in klass.__dict__.keys():
                 attr = getattr(klass, attr_str)
-                if (not attr_str.startswith('__') and
-                        isinstance(attr, types.MethodType)):
-                    attrs.append(Method(name=attr_str,
-                                 value=attr,
-                                 classobject=klass,
-                                 instance_class=self.get_klass()))
+                if (not attr_str.startswith('__') and self._is_method(attr)):
+                    attrs.append(
+                        Method(
+                            name=attr_str,
+                            value=attr,
+                            classobject=klass,
+                            instance_class=self.get_klass(),
+                        )
+                    )
         return attrs
 
     def get_direct_ancestors(self):

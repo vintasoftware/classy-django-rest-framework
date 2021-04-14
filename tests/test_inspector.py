@@ -12,15 +12,15 @@ class TestInspector(unittest.TestCase):
         self.inspector = Inspector(self.klass, self.module)
 
     def test_get_klass(self):
-        self.assertEquals(self.inspector.get_klass(),
+        self.assertEqual(self.inspector.get_klass(),
                           getattr(generics, self.klass))
 
     def test_first_ancestor_is_itself(self):
-        self.assertEquals(self.inspector.get_klass_mro()[0].__name__,
+        self.assertEqual(self.inspector.get_klass_mro()[0].__name__,
                           self.klass)
 
     def test_ancestor(self):
-        self.assertEquals([x.__name__ for x in self.inspector.get_klass_mro()],
+        self.assertEqual([x.__name__ for x in self.inspector.get_klass_mro()],
                           [self.klass, 'APIView', 'View'])
 
     def test_attributes(self):
@@ -37,7 +37,7 @@ class TestInspector(unittest.TestCase):
         self.klass = 'ListModelMixin'
         self.module = 'rest_framework.mixins'
         self.inspector = Inspector(self.klass, self.module)
-        self.assertItemsEqual([x.__name__ for x in
+        self.assertCountEqual([x.__name__ for x in
                                self.inspector.get_children()],
                               ['ListCreateAPIView',
                                'ListAPIView',
@@ -48,7 +48,7 @@ class TestInspector(unittest.TestCase):
         self.klass = 'CreateAPIView'
         self.module = 'rest_framework.generics'
         self.inspector = Inspector(self.klass, self.module)
-        self.assertItemsEqual([x.__name__ for x in
+        self.assertCountEqual([x.__name__ for x in
                               self.inspector.get_direct_ancestors()],
                               ['CreateModelMixin',
                                'GenericAPIView'])
@@ -57,7 +57,7 @@ class TestInspector(unittest.TestCase):
         self.klass = 'ListModelMixin'
         self.module = 'rest_framework.mixins'
         self.inspector = Inspector(self.klass, self.module)
-        self.assertItemsEqual(self.inspector.get_unavailable_methods(),
+        self.assertCountEqual(self.inspector.get_unavailable_methods(),
                               ['filter_queryset', 'get_queryset',
                                'paginate_queryset', 'get_serializer',
                                'get_paginated_response'])

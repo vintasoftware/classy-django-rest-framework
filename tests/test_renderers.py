@@ -2,6 +2,7 @@ import unittest
 
 from mock import mock_open, patch
 from rest_framework.generics import ListAPIView
+from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
 
 from rest_framework_ccbv.renderers import (
     BasePageRenderer, IndexPageRenderer, LandPageRenderer, ErrorPageRenderer,
@@ -11,14 +12,16 @@ from rest_framework_ccbv.config import VERSION
 from rest_framework_ccbv.inspector import Attributes
 
 KLASS_FILE_CONTENT = (
-'{"2.2": {"rest_framework.generics": ["RetrieveDestroyAPIView", "ListAPIView"]},'
+'{"3.2": {"rest_framework.generics": ["RetrieveDestroyAPIView", "ListAPIView"]},'
 '"%s": {"rest_framework.generics": ["RetrieveDestroyAPIView", "ListAPIView"]}}' % VERSION
 )
 
 
 class TestBasePageRenderer(unittest.TestCase):
     def setUp(self):
-        self.renderer = BasePageRenderer([ListAPIView])
+        self.renderer = BasePageRenderer(
+            [ListAPIView, CreateModelMixin, DestroyModelMixin]
+        )
         self.renderer.template_name = 'base.html'
 
     @patch('rest_framework_ccbv.renderers.BasePageRenderer.get_context', return_value={'foo': 'bar'})
@@ -38,10 +41,13 @@ class TestBasePageRenderer(unittest.TestCase):
         self.renderer.render('foo')
         context = get_template_mock.return_value.render.call_args_list[0][0][0]
         assert context['version_prefix'] == 'Django REST Framework'
-        assert context['version']
+        assert context['version'] == VERSION
         assert context['versions']
         assert context['other_versions']
-        assert context['klasses'] == [ListAPIView]
+        assert context['grouped_klasses'] == {
+            "rest_framework.generics": [ListAPIView],
+            "rest_framework.mixins": [CreateModelMixin, DestroyModelMixin],
+        }
 
 
 class TestStaticPagesRenderered(unittest.TestCase):
@@ -87,7 +93,7 @@ class TestDetailPageRenderer(unittest.TestCase):
     def test_context(self, get_template_mock):
         self.renderer.render('foo')
         context = get_template_mock.return_value.render.call_args_list[0][0][0]
-        assert context['other_versions'] == ['2.2']
+        assert context['other_versions'] == ['3.2']
         assert context['name'] == ListAPIView.__name__
         assert isinstance(context['ancestors'], (list, tuple))
         assert isinstance(context['direct_ancestors'], (list, tuple))

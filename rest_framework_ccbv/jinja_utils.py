@@ -4,7 +4,7 @@ from rest_framework.serializers import BaseSerializer
 from rest_framework.compat import View
 from jinja2 import contextfunction, FileSystemLoader, Environment
 
-from config import VERSION, EXACT_VERSION
+from .config import VERSION, EXACT_VERSION
 
 templateLoader = FileSystemLoader(searchpath="templates")
 templateEnv = Environment(loader=templateLoader,
