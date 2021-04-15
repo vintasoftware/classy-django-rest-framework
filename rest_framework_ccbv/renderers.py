@@ -1,4 +1,5 @@
 import json
+import importlib
 from collections import defaultdict
 
 from .inspector import Inspector
@@ -12,7 +13,9 @@ class BasePageRenderer(object):
         grouped_klasses = defaultdict(list)
         for klass in klasses:
             module = klass.__module__
-            grouped_klasses[module].append(klass)
+            # Add here all modules that should be hidden on index/navbar
+            if not module.split('.')[-1] in ['fields']:
+                grouped_klasses[module].append(klass)
         self.grouped_klasses = dict(grouped_klasses)
 
     def render(self, filename):
@@ -36,11 +39,11 @@ class BasePageRenderer(object):
 class DetailPageRenderer(BasePageRenderer):
     template_name = 'detail_view.html'
 
-    def __init__(self, klasses, klass, module):
+    def __init__(self, klasses, klass_name, module_name):
         super(DetailPageRenderer, self).__init__(klasses)
-        self.klass = klass
-        self.module = module
-        self.inspector = Inspector(self.klass, self.module)
+        self.klass_name = klass_name
+        self.module_name = module_name
+        self.inspector = Inspector(self.klass_name, self.module_name)
 
     def get_context(self):
         context = super(DetailPageRenderer, self).get_context()
@@ -50,16 +53,16 @@ class DetailPageRenderer(BasePageRenderer):
             version
             for version in context['other_versions']
             if version in available_versions]
-        context['name'] = self.klass
+        context['name'] = self.klass_name
         context['ancestors'] = self.inspector.get_klass_mro()
         context['direct_ancestors'] = self.inspector.get_direct_ancestors()
         context['attributes'] = self.inspector.get_attributes()
         context['methods'] = self.inspector.get_methods()
 
-        context['this_klass'] = next(
-            filter(lambda x: x.__name__ == self.klass, self.grouped_klasses[self.module])
-        )
-        context['this_module'] = self.module
+        context['this_module'] = self.module_name
+
+        module = importlib.import_module(self.module_name)
+        context['this_klass'] = getattr(module, self.klass_name)
 
         context['children'] = self.inspector.get_children()
         context['unavailable_methods'] = self.inspector.get_unavailable_methods()
