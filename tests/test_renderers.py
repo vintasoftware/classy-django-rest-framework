@@ -20,6 +20,9 @@ KLASS_FILE_CONTENT = (
 
 class TestBasePageRenderer(unittest.TestCase):
     def setUp(self):
+        # Adding Field below just to make sure that Field
+        # is not being added to grouped_klasses later on.
+        # We don't want to show Field.
         self.renderer = BasePageRenderer(
             [Field, ListAPIView, CreateModelMixin, DestroyModelMixin]
         )
