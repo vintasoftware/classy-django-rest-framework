@@ -1,7 +1,6 @@
 <div class="span{{ column_width }}">
     {% for module, klasses in grouped_klasses.items() %}
     {% if module.split('.')[-1] == 'serializers' %}</div><div class="span{{ column_width }}">{% endif %}
-    {% if not module.split('.')[-1] in ['fields'] %}
     <div class="well skinny klass-list">
         <ul class="nav nav-list">
             <li class="nav-header"><h3>{{ module.split('.')[-1] }}</h3></li>
@@ -14,6 +13,5 @@
             {% endfor %}
         </ul>
     </div>
-    {% endif %}
     {% endfor %}
 </div>

@@ -2,6 +2,7 @@ import unittest
 
 from mock import mock_open, patch
 from rest_framework.generics import ListAPIView
+from rest_framework.fields import Field
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin
 
 from rest_framework_ccbv.renderers import (
@@ -20,7 +21,7 @@ KLASS_FILE_CONTENT = (
 class TestBasePageRenderer(unittest.TestCase):
     def setUp(self):
         self.renderer = BasePageRenderer(
-            [ListAPIView, CreateModelMixin, DestroyModelMixin]
+            [Field, ListAPIView, CreateModelMixin, DestroyModelMixin]
         )
         self.renderer.template_name = 'base.html'
 
