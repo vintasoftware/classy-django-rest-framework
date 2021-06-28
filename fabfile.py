@@ -3,8 +3,8 @@ import logging
 from decouple import config
 from fabric import task
 
-FOLDER = 'public'
-FOLDER = FOLDER.strip('/')
+FOLDER = "public"
+FOLDER = FOLDER.strip("/")
 
 logging.basicConfig(level=logging.INFO)
 
@@ -12,17 +12,18 @@ logging.basicConfig(level=logging.INFO)
 @task
 def deploy(c):
     with c.prefix("source env/bin/activate"):
-        AWS_BUCKET_NAME = config('AWS_BUCKET_NAME')
-        AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
-        AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
-        c.run("s3cmd sync {}/ s3://{} --acl-public --delete-removed "
+        AWS_BUCKET_NAME = config("AWS_BUCKET_NAME")
+        AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
+        AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
+        c.run(
+            "s3cmd sync {}/ s3://{} --acl-public --delete-removed "
             "--guess-mime-type --access_key={} --secret_key={}".format(
                 FOLDER,
                 AWS_BUCKET_NAME,
                 AWS_ACCESS_KEY_ID,
-                AWS_SECRET_ACCESS_KEY
-                )
+                AWS_SECRET_ACCESS_KEY,
             )
+        )
 
 
 @task
@@ -33,7 +34,7 @@ def test(c):
 
 @task
 def runserver(c):
-    c.run("cd %s && python -m SimpleHTTPServer" % FOLDER)
+    c.run("cd %s && python -m http.server" % FOLDER)
 
 
 def clean(c):
@@ -49,12 +50,14 @@ def collect_static(c):
 @task
 def index(c):
     from build_tools.index_generator import main
+
     main()
 
 
 @task
 def version(c):
     from build_tools.compile_static import main
+
     main(out_folder=FOLDER)
 
 

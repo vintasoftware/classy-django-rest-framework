@@ -2,7 +2,7 @@
 
 ## What is this?
 
-[Django REST framework](http://www.django-rest-framework.org) is a powerful and flexible toolkit that makes it easy to build Web APIs. It provides class based generic API views and serializers. We've taken all the attributes and methods that every view/serializer defines or inherits, and flattened all that information onto one comprehensive page per class. This project is heavily based on [Classy Class-Based Views](http://ccbv.co.uk) and was developed by [Vinta Software Studio](http://www.vinta.com.br).
+[Django REST framework](https://www.django-rest-framework.org) is a powerful and flexible toolkit that makes it easy to build Web APIs. It provides class based generic API views and serializers. We've taken all the attributes and methods that every view/serializer defines or inherits, and flattened all that information onto one comprehensive page per class. This project is heavily based on [Classy Class-Based Views](https://ccbv.co.uk) and was developed by [Vinta Software Studio](https://www.vinta.com.br).
 
 ## Dependencies
 * Python 3.8+

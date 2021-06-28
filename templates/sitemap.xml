@@ -1,4 +1,4 @@
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>{{ base_url }}/</loc>
         <priority>1.0</priority>
@@ -9,9 +9,9 @@
                 <url>
                     <loc>{{ base_url }}/{{ version }}/{{ module }}/{{ method }}.html</loc>
                     {% if version == latest_version %}
-                        <priority>0.9</priority>
+                    <priority>0.9</priority>
                     {% else %}
-                        <priority>0.5</priority>
+                    <priority>0.5</priority>
                     {% endif %}
                 </url>
             {% endfor %}
