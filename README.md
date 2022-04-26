@@ -44,5 +44,7 @@ Install test dependencies:
 Run the tests with:
 `fab test`
 
-## Help
-If you have any questions or need help, please send an email to: contact@vinta.com.br
+## Commercial Support
+[![alt text](https://avatars2.githubusercontent.com/u/5529080?s=80&v=4 "Vinta Logo")](https://vintasoftware.com)
+
+This project, as other Vinta open-source projects, is used in products of Vinta's clients. We are always looking for exciting work, so if you need any commercial support, feel free to get in touch: contact@vinta.com.br
