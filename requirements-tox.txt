@@ -1,4 +1,5 @@
 Fabric==2.6.0
+Markupsafe==2.0.1
 Jinja2==2.11.3
 Pygments==2.8.1
 python-decouple==3.4
