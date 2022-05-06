@@ -58,3 +58,4 @@ public/
 .env
 .klasses.json
 .python-version
+venv/

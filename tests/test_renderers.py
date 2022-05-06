@@ -1,6 +1,6 @@
 import unittest
 
-from mock import mock_open, patch
+from unittest.mock import mock_open, patch
 from rest_framework.generics import ListAPIView
 from rest_framework.fields import Field
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin

@@ -3,7 +3,7 @@ import importlib
 from collections import defaultdict
 
 from .inspector import Inspector
-from .jinja_utils import templateEnv
+from .jinja_utils import template_env
 from .config import REST_FRAMEWORK_VERSIONS, VERSION, BASE_URL
 
 
@@ -19,7 +19,7 @@ class BasePageRenderer(object):
         self.grouped_klasses = dict(grouped_klasses)
 
     def render(self, filename):
-        template = templateEnv.get_template(self.template_name)
+        template = template_env.get_template(self.template_name)
         context = self.get_context()
         with open(filename, 'w') as f:
             f.write(template.render(context))
@@ -87,7 +87,7 @@ class SitemapRenderer(BasePageRenderer):
     def get_context(self):
         context = {}
         with open('.klasses.json', 'r') as f:
-            klasses = json.loads(f.read())
+            klasses = json.load(f)
 
         context['klasses'] = klasses
         context['latest_version'] = REST_FRAMEWORK_VERSIONS[-1]
