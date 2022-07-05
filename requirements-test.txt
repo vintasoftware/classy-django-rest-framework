@@ -1,4 +1,4 @@
 -r requirements-tox.txt
 djangorestframework==3.13.1
-django==4.0.4
+django==4.0.6
 pytest==7.1.2
