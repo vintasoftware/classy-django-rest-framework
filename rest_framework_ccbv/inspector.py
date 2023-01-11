@@ -60,6 +60,10 @@ class Attribute(object):
         self.instance_class = instance_class
         self.dirty = False
 
+    @property
+    def repr_value(self):
+        return repr(self.value)
+
     def __eq__(self, obj):
         return self.name == obj.name and self.value == obj.value
 
