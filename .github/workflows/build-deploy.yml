@@ -1,4 +1,4 @@
-name: build
+name: build-deploy
 
 on: workflow_dispatch
 
@@ -15,7 +15,5 @@ jobs:
         run: pip install -r requirements.txt
       - name: Build
         run: fab build
-      - name: Check if worked
-        run: |
-          cd public
-          ls
+      - name: Deploy
+        run: fab deploy
