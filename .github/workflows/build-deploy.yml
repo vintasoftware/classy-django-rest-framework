@@ -14,11 +14,13 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          python -m venv env
-          source env/bin/activate
           pip install -r requirements.txt
-          echo "VIRTUAL ENV:" $VIRTUAL_ENV
+          pip install s3cmd
       - name: Build
         run: fab build
       - name: Deploy
+        env:
+          AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: fab deploy
