@@ -15,6 +15,7 @@ REST_FRAMEWORK_VERSIONS = [
     "3.11",
     "3.12",
     "3.13",
+    "3.14"
 ]
 
 
