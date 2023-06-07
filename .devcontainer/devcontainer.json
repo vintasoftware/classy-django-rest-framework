@@ -15,7 +15,8 @@
                 "the-compiler.python-tox",
                 "ms-azuretools.vscode-docker",
                 "redhat.vscode-yaml",
-                "github.vscode-github-actions"
+                "github.vscode-github-actions",
+                "pamaron.pytest-runner"
             ]
         }
     }

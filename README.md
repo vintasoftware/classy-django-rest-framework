@@ -1,5 +1,5 @@
 # Classy Django REST Framework. 
-[![build-deploy](https://github.com/vintasoftware/classy-django-rest-framework/actions/workflows/build-deploy.yml/badge.svg)](https://github.com/vintasoftware/classy-django-rest-framework/actions/workflows/build-deploy.yml) [![Coverage Status](https://coveralls.io/repos/github/vintasoftware/classy-django-rest-framework/badge.svg?branch=develop)](https://coveralls.io/github/vintasoftware/classy-django-rest-framework?branch=develop)
+[![Build Status](https://github.com/vintasoftware/classy-django-rest-framework/actions/workflows/build.yml/badge.svg)](https://github.com/vintasoftware/classy-django-rest-framework/actions/workflows/build.yml) [![Coverage Status](https://coveralls.io/repos/github/vintasoftware/classy-django-rest-framework/badge.svg?branch=develop)](https://coveralls.io/github/vintasoftware/classy-django-rest-framework?branch=develop)
 
 ## What is this?
 

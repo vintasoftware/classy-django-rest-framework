@@ -48,7 +48,8 @@ class CodeHtmlFormatterTest(unittest.TestCase):
         fmt = CodeHtmlFormatter(instance_class=type, **optdict)
         fmt.format(tokensource, outfile)
         html = outfile.getvalue()
-        self.assertTrue(re.search('<pre><span class="normal">\s+1</span>', html))
+        self.assertTrue(
+            re.search('<pre><span class="normal">\s+1</span>', html))
 
     def test_linenos_with_startnum(self):
         optdict = dict(linenos=True, linenostart=5)
@@ -56,7 +57,8 @@ class CodeHtmlFormatterTest(unittest.TestCase):
         fmt = CodeHtmlFormatter(instance_class=type, **optdict)
         fmt.format(tokensource, outfile)
         html = outfile.getvalue()
-        self.assertTrue(re.search('<pre><span class="normal">\s+5</span>', html))
+        self.assertTrue(
+            re.search('<pre><span class="normal">\s+5</span>', html))
 
     def test_lineanchors(self):
         optdict = dict(lineanchors="foo")
@@ -64,7 +66,8 @@ class CodeHtmlFormatterTest(unittest.TestCase):
         fmt = CodeHtmlFormatter(instance_class=type, **optdict)
         fmt.format(tokensource, outfile)
         html = outfile.getvalue()
-        self.assertTrue(re.search('<pre><span></span><a name="foo-1">', html))
+        self.assertTrue(
+            re.search('<pre><span></span><a .*name="foo-1" .*>', html))
 
     def test_lineanchors_with_startnum(self):
         optdict = dict(lineanchors="foo", linenostart=5)
@@ -72,7 +75,8 @@ class CodeHtmlFormatterTest(unittest.TestCase):
         fmt = CodeHtmlFormatter(instance_class=type, **optdict)
         fmt.format(tokensource, outfile)
         html = outfile.getvalue()
-        self.assertTrue(re.search('<pre><span></span><a name="foo-5">', html))
+        self.assertTrue(
+            re.search('<pre><span></span><a .*name="foo-5" .*>', html))
 
     def test_get_style_defs(self):
         def fix_style_def(s):
@@ -94,10 +98,10 @@ class CodeHtmlFormatterTest(unittest.TestCase):
 
     def test_unicode_options(self):
         fmt = CodeHtmlFormatter(title=u'Föö',
-                            instance_class=type,
-                            cssclass=u'bär',
-                            cssstyles=u'div:before { content: \'bäz\' }',
-                            encoding='utf-8')
+                                instance_class=type,
+                                cssclass=u'bär',
+                                cssstyles=u'div:before { content: \'bäz\' }',
+                                encoding='utf-8')
         handle, pathname = tempfile.mkstemp('.html')
         tfile = os.fdopen(handle, 'w+b')
         fmt.format(tokensource, tfile)

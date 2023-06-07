@@ -13,8 +13,8 @@ from rest_framework_ccbv.config import VERSION
 from rest_framework_ccbv.inspector import Attributes
 
 KLASS_FILE_CONTENT = (
-'{"3.2": {"rest_framework.generics": ["RetrieveDestroyAPIView", "ListAPIView"]},'
-'"%s": {"rest_framework.generics": ["RetrieveDestroyAPIView", "ListAPIView"]}}' % VERSION
+    '{"3.2": {"rest_framework.generics": ["RetrieveDestroyAPIView", "ListAPIView"]},'
+    '"%s": {"rest_framework.generics": ["RetrieveDestroyAPIView", "ListAPIView"]}}' % VERSION
 )
 
 
@@ -29,7 +29,7 @@ class TestBasePageRenderer(unittest.TestCase):
         self.renderer.template_name = 'base.html'
 
     @patch('rest_framework_ccbv.renderers.BasePageRenderer.get_context', return_value={'foo': 'bar'})
-    @patch('rest_framework_ccbv.renderers.templateEnv.get_template')
+    @patch('rest_framework_ccbv.renderers.template_env.get_template')
     @patch('rest_framework_ccbv.renderers.open', new_callable=mock_open)
     def test_render(self, mock_open, get_template_mock, get_context_mock):
         self.renderer.render('foo')
@@ -37,9 +37,10 @@ class TestBasePageRenderer(unittest.TestCase):
         handle = mock_open()
         handle.write.assert_called_once()
         get_template_mock.assert_called_with('base.html')
-        get_template_mock.return_value.render.assert_called_with({'foo': 'bar'})
+        get_template_mock.return_value.render.assert_called_with({
+                                                                 'foo': 'bar'})
 
-    @patch('rest_framework_ccbv.renderers.templateEnv.get_template')
+    @patch('rest_framework_ccbv.renderers.template_env.get_template')
     @patch('rest_framework_ccbv.renderers.open', mock_open())
     def test_context(self, get_template_mock):
         self.renderer.render('foo')
@@ -60,7 +61,7 @@ class TestStaticPagesRenderered(unittest.TestCase):
         self.rendererLandPage = LandPageRenderer([ListAPIView])
         self.rendererErrorPage = ErrorPageRenderer([ListAPIView])
 
-    @patch('rest_framework_ccbv.renderers.templateEnv.get_template')
+    @patch('rest_framework_ccbv.renderers.template_env.get_template')
     @patch('rest_framework_ccbv.renderers.open', mock_open())
     def test_template_name(self, get_template_mock):
         self.rendererIndex.render('foo')
@@ -75,7 +76,7 @@ class TestSitemapRenderer(unittest.TestCase):
     def setUp(self):
         self.renderer = SitemapRenderer([ListAPIView])
 
-    @patch('rest_framework_ccbv.renderers.templateEnv.get_template')
+    @patch('rest_framework_ccbv.renderers.template_env.get_template')
     @patch('rest_framework_ccbv.renderers.open', mock_open(read_data='{}'))
     def test_context(self, get_template_mock):
         self.renderer.render('foo')
@@ -91,7 +92,7 @@ class TestDetailPageRenderer(unittest.TestCase):
         self.renderer = DetailPageRenderer(
             [ListAPIView], ListAPIView.__name__, ListAPIView.__module__)
 
-    @patch('rest_framework_ccbv.renderers.templateEnv.get_template')
+    @patch('rest_framework_ccbv.renderers.template_env.get_template')
     @patch('rest_framework_ccbv.renderers.open', mock_open(read_data=KLASS_FILE_CONTENT))
     @patch('rest_framework_ccbv.inspector.open', mock_open(read_data=KLASS_FILE_CONTENT))
     def test_context(self, get_template_mock):
