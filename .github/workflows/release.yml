@@ -1,9 +1,9 @@
-name: build-deploy
+name: release
 
 on: workflow_dispatch
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3

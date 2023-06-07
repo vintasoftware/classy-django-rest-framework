@@ -4,13 +4,13 @@ import inspect
 from django.views.generic import DetailView
 from rest_framework.generics import ListAPIView
 
-from rest_framework_ccbv.jinja_utils import templateEnv
+from rest_framework_ccbv.jinja_utils import template_env
 from rest_framework_ccbv.config import EXACT_VERSION
 
 
 class TestJinjaUtils(unittest.TestCase):
     def get_context_function(self, name):
-        return templateEnv.globals[name]
+        return template_env.globals[name]
 
     def test_get_klass_url_with_django_view(self):
         get_klass_url = self.get_context_function("get_klass_url")

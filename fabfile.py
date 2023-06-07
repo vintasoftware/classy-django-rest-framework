@@ -31,6 +31,11 @@ def test(c):
 
 
 @task
+def coverage(c):
+    c.run("py.test --cov-report= --cov=rest_framework_ccbv tests/")
+
+
+@task
 def runserver(c):
     c.run("cd %s && python -m http.server" % FOLDER)
 
