@@ -11,25 +11,23 @@ logging.basicConfig(level=logging.INFO)
 
 @task
 def deploy(c):
-    with c.prefix("source env/bin/activate"):
-        AWS_BUCKET_NAME = config("AWS_BUCKET_NAME")
-        AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
-        AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
-        c.run(
-            "s3cmd sync {}/ s3://{} --acl-public --delete-removed "
-            "--guess-mime-type --access_key={} --secret_key={}".format(
-                FOLDER,
-                AWS_BUCKET_NAME,
-                AWS_ACCESS_KEY_ID,
-                AWS_SECRET_ACCESS_KEY,
-            )
+    AWS_BUCKET_NAME = config("AWS_BUCKET_NAME")
+    AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
+    c.run(
+        "s3cmd sync {}/ s3://{} --acl-public --delete-removed "
+        "--guess-mime-type --access_key={} --secret_key={}".format(
+            FOLDER,
+            AWS_BUCKET_NAME,
+            AWS_ACCESS_KEY_ID,
+            AWS_SECRET_ACCESS_KEY,
         )
+    )
 
 
 @task
 def test(c):
-    with c.prefix("source env/bin/activate"):
-        c.run("python runtests.py")
+    c.run("python runtests.py")
 
 
 @task
@@ -63,8 +61,7 @@ def version(c):
 
 @task
 def build(c):
-    with c.prefix("source env/bin/activate"):
-        clean(c)
-        logging.info("collecting statics")
-        collect_static(c)
-        c.run("tox -c build.ini")
+    clean(c)
+    logging.info("collecting statics")
+    collect_static(c)
+    c.run("tox -c build.ini")
