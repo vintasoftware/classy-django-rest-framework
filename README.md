@@ -27,6 +27,16 @@ The first build will take a while.
 
 `fab test`
 
+## Adding a new version
+
+1. Add the version to `rest_framework_ccbv.config.py::REST_FRAMEWORK_VERSIONS`
+2. In `build.ini`:
+    - Add the version to envlist
+    - Add the deps to the version, use the latest supported django version (check deps314)
+    - Add the index generation (check testenv:drf314)
+    - Add the doc generation (check testenv:drfbuild314)
+3. Update `requirements-test.txt` to use the latest supported DRF version and its latest supported Django version
+
 ## Commercial Support
 
 [![alt text](https://avatars2.githubusercontent.com/u/5529080?s=80&v=4 "Vinta Logo")](https://www.vinta.com.br/)
