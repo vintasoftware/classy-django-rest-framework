@@ -32,9 +32,10 @@ The first build will take a while.
 1. Add the version to `rest_framework_ccbv.config.py::REST_FRAMEWORK_VERSIONS`
 2. In `build.ini`:
     - Add the version to envlist
-    - Add the deps to the version (check deps314)
+    - Add the deps to the version, use the latest supported django version (check deps314)
     - Add the index generation (check testenv:drf314)
     - Add the doc generation (check testenv:drfbuild314)
+3. Update `requirements-test.txt` to use the latest supported DRF version and its latest supported Django version
 
 ## Commercial Support
 
