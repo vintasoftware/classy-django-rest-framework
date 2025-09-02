@@ -1,4 +1,4 @@
-Fabric==2.7.0
-Jinja2==3.1.2
-Pygments==2.15.0
-python-decouple==3.6
+Fabric==3.2.2
+Jinja2==3.1.6
+Pygments==2.19.2
+python-decouple==3.8

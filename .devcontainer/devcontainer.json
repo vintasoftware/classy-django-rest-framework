@@ -2,7 +2,7 @@
 // README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
     "name": "Cdrf Env",
-    "image": "mcr.microsoft.com/devcontainers/python:0-3.8",
+    "image": "mcr.microsoft.com/devcontainers/python:0-3.10",
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     "forwardPorts": [
         8000
