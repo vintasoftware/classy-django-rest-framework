@@ -2,11 +2,25 @@ name: release
 
 on: workflow_dispatch
 
+env:
+  AWS_REGION : "us-east-1"
+permissions:
+  id-token: write   # This is required for requesting the AWS JWT
+  contents: read    # This is required for actions/checkout
 jobs:
   release:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
+        with:
+          role-to-assume: arn:aws:iam::310361226925:oidc-provider/token.actions.githubusercontent.com
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Test AWS credentials with Sts GetCallerIdentity
+        run: |
+          aws sts get-caller-identity
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
@@ -21,6 +35,4 @@ jobs:
       - name: Deploy
         env:
           AWS_BUCKET_NAME: ${{ secrets.AWS_BUCKET_NAME }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: fab deploy
