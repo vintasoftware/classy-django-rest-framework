@@ -15,7 +15,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
-          role-to-assume: arn:aws:iam::310361226925:oidc-provider/token.actions.githubusercontent.com
+          role-to-assume: arn:aws:iam::310361226925:role/s3-cdrf.co-deployer
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_REGION }}
       - name: Test AWS credentials with Sts GetCallerIdentity
