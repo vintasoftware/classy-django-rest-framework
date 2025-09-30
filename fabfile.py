@@ -14,15 +14,21 @@ def deploy(c):
     AWS_BUCKET_NAME = config("AWS_BUCKET_NAME")
     AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default=None)
     AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", default=None)
+    AWS_SESSION_TOKEN = config("AWS_SESSION_TOKEN", default=None)
 
     # Build the s3cmd command with optional credentials
     cmd_parts = [
-        "s3cmd sync {}/ s3://{} --acl-public --delete-removed --guess-mime-type".format(
-            FOLDER, AWS_BUCKET_NAME
-        )
+        (
+            "s3cmd sync {}/ s3://{} --acl-public --delete-removed --guess-mime-type"
+        ).format(FOLDER, AWS_BUCKET_NAME)
     ]
 
-    if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
+    # Only pass explicit static keys when no session token is present.
+    # When using OIDC via GitHub Actions, credentials are provided via
+    # environment variables including a temporary session token that s3cmd
+    # can pick up automatically. In that case, avoid overriding with
+    # access/secret flags which would drop the session token context.
+    if (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY) and not AWS_SESSION_TOKEN:
         cmd_parts.append(
             "--access_key={} --secret_key={}".format(
                 AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
