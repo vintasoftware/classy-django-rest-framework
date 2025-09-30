@@ -12,17 +12,24 @@ logging.basicConfig(level=logging.INFO)
 @task
 def deploy(c):
     AWS_BUCKET_NAME = config("AWS_BUCKET_NAME")
-    AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY")
-    c.run(
-        "s3cmd sync {}/ s3://{} --acl-public --delete-removed "
-        "--guess-mime-type --access_key={} --secret_key={}".format(
-            FOLDER,
-            AWS_BUCKET_NAME,
-            AWS_ACCESS_KEY_ID,
-            AWS_SECRET_ACCESS_KEY,
+    AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", default=None)
+    AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_ACCESS_KEY", default=None)
+
+    # Build the s3cmd command with optional credentials
+    cmd_parts = [
+        "s3cmd sync {}/ s3://{} --acl-public --delete-removed --guess-mime-type".format(
+            FOLDER, AWS_BUCKET_NAME
         )
-    )
+    ]
+
+    if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY:
+        cmd_parts.append(
+            "--access_key={} --secret_key={}".format(
+                AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+            )
+        )
+
+    c.run(" ".join(cmd_parts))
 
 
 @task
